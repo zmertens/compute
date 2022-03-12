@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\GLSL_RAYTRACER.dir/objects.a
+C:\Strawberry\c\bin\ar.exe qc CMakeFiles\GLSL_RAYTRACER.dir/objects.a @CMakeFiles\GLSL_RAYTRACER.dir\objects1.rsp
+C:\Strawberry\c\bin\g++.exe -std=c++11 -g -Wl,--whole-archive CMakeFiles\GLSL_RAYTRACER.dir/objects.a -Wl,--no-whole-archive -o GLSL_RAYTRACER.exe -Wl,--out-implib,libGLSL_RAYTRACER.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\GLSL_RAYTRACER.dir\linklibs.rsp

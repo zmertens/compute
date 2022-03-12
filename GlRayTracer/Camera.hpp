@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include <glm/glm.hpp>
+#include "extlibs/glm/glm.hpp"
 
 class Camera
 {

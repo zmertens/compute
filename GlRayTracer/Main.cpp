@@ -7,6 +7,7 @@
 
 #include <glm/gtc/constants.hpp> // 2pi
 #include <glm/gtc/matrix_transform.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/transform.hpp>
 
 #include "Shader.hpp"
