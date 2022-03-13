@@ -1,3 +1,6 @@
+// A compute raytracer based on
+// https://github.com/LWJGL/lwjgl3-wiki/wiki/2.6.1.-Ray-tracing-with-OpenGL-Compute-Shaders
+
 #include <cstdlib>
 #include <vector>
 #include <unordered_map>
