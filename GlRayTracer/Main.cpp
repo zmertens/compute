@@ -60,13 +60,13 @@ int main()
     printOpenGlInfo();
 
     Shader tracerShader;
-    tracerShader.compileAndAttachShader(ShaderTypes::VERTEX_SHADER, "../shaders/raytracer.vert.glsl");
-    tracerShader.compileAndAttachShader(ShaderTypes::FRAGMENT_SHADER, "../shaders/raytracer.frag.glsl");
+    tracerShader.compileAndAttachShader(ShaderTypes::VERTEX_SHADER, "./shaders/raytracer.vert.glsl");
+    tracerShader.compileAndAttachShader(ShaderTypes::FRAGMENT_SHADER, "./shaders/raytracer.frag.glsl");
     tracerShader.linkProgram();
     tracerShader.bind();
 
     Shader computeShader;
-    computeShader.compileAndAttachShader(ShaderTypes::COMPUTE_SHADER, "../shaders/raytracer.cs.glsl");
+    computeShader.compileAndAttachShader(ShaderTypes::COMPUTE_SHADER, "./shaders/raytracer.cs.glsl");
     computeShader.linkProgram();
     computeShader.bind();
 
