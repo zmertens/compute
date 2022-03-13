@@ -1,6 +1,8 @@
 #include "Shader.hpp"
 
 #include <cstring>
+#include <fstream>
+#include <iostream>
 
 #include "./extlibs/glm/gtc/type_ptr.hpp"
 
@@ -31,6 +33,25 @@ void Shader::compileAndAttachShader(const int shaderType, const std::string& fil
 {
     // Build shader string from a file
     std::string shaderCode = ""; 
+    // Code from LearnOpenGL.com
+    std::ifstream shaderFileStream;
+    // ensure ifstream objects can throw exceptions:
+    shaderFileStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try 
+    {
+        shaderFileStream.open(filename);
+        std::stringstream shaderStrStream;
+        // read file's buffer contents into streams
+        shaderStrStream << shaderFileStream.rdbuf();		
+        // close file handlers
+        shaderFileStream.close();
+        // convert stream into string
+        shaderCode = shaderStrStream.str();		
+    }
+    catch(std::ifstream::failure e)
+    {
+        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+    }
 
     mFileNames.emplace(shaderType, filename);
     GLuint shaderId = compile(shaderType, shaderCode);
