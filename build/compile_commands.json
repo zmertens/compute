@@ -1,52 +1,52 @@
 [
 {
-  "directory": "C:/Users/zach/Desktop/GlslComputeRaytracer/build",
-  "command": "C:\\MinGW\\bin\\mingw32-gcc.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_C.rsp -g -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\extlibs\\gl_core_4_5.c.obj -c C:\\Users\\zach\\Desktop\\GlslComputeRaytracer\\GlRayTracer\\extlibs\\gl_core_4_5.c",
-  "file": "C:/Users/zach/Desktop/GlslComputeRaytracer/GlRayTracer/extlibs/gl_core_4_5.c"
+  "directory": "C:/Users/zach/Desktop/zmertens-compute/build",
+  "command": "C:\\Strawberry\\c\\bin\\gcc.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_C.rsp  -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\extlibs\\gl_core_4_5.c.obj -c C:\\Users\\zach\\Desktop\\zmertens-compute\\GlRayTracer\\extlibs\\gl_core_4_5.c",
+  "file": "C:/Users/zach/Desktop/zmertens-compute/GlRayTracer/extlibs/gl_core_4_5.c"
 },
 {
-  "directory": "C:/Users/zach/Desktop/GlslComputeRaytracer/build",
-  "command": "C:\\MinGW\\bin\\mingw32-g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -g -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Camera.cpp.obj -c C:\\Users\\zach\\Desktop\\GlslComputeRaytracer\\GlRayTracer\\Camera.cpp",
-  "file": "C:/Users/zach/Desktop/GlslComputeRaytracer/GlRayTracer/Camera.cpp"
+  "directory": "C:/Users/zach/Desktop/zmertens-compute/build",
+  "command": "C:\\Strawberry\\c\\bin\\g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Camera.cpp.obj -c C:\\Users\\zach\\Desktop\\zmertens-compute\\GlRayTracer\\Camera.cpp",
+  "file": "C:/Users/zach/Desktop/zmertens-compute/GlRayTracer/Camera.cpp"
 },
 {
-  "directory": "C:/Users/zach/Desktop/GlslComputeRaytracer/build",
-  "command": "C:\\MinGW\\bin\\mingw32-g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -g -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\GlUtils.cpp.obj -c C:\\Users\\zach\\Desktop\\GlslComputeRaytracer\\GlRayTracer\\GlUtils.cpp",
-  "file": "C:/Users/zach/Desktop/GlslComputeRaytracer/GlRayTracer/GlUtils.cpp"
+  "directory": "C:/Users/zach/Desktop/zmertens-compute/build",
+  "command": "C:\\Strawberry\\c\\bin\\g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\GlUtils.cpp.obj -c C:\\Users\\zach\\Desktop\\zmertens-compute\\GlRayTracer\\GlUtils.cpp",
+  "file": "C:/Users/zach/Desktop/zmertens-compute/GlRayTracer/GlUtils.cpp"
 },
 {
-  "directory": "C:/Users/zach/Desktop/GlslComputeRaytracer/build",
-  "command": "C:\\MinGW\\bin\\mingw32-g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -g -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Light.cpp.obj -c C:\\Users\\zach\\Desktop\\GlslComputeRaytracer\\GlRayTracer\\Light.cpp",
-  "file": "C:/Users/zach/Desktop/GlslComputeRaytracer/GlRayTracer/Light.cpp"
+  "directory": "C:/Users/zach/Desktop/zmertens-compute/build",
+  "command": "C:\\Strawberry\\c\\bin\\g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Light.cpp.obj -c C:\\Users\\zach\\Desktop\\zmertens-compute\\GlRayTracer\\Light.cpp",
+  "file": "C:/Users/zach/Desktop/zmertens-compute/GlRayTracer/Light.cpp"
 },
 {
-  "directory": "C:/Users/zach/Desktop/GlslComputeRaytracer/build",
-  "command": "C:\\MinGW\\bin\\mingw32-g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -g -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Main.cpp.obj -c C:\\Users\\zach\\Desktop\\GlslComputeRaytracer\\GlRayTracer\\Main.cpp",
-  "file": "C:/Users/zach/Desktop/GlslComputeRaytracer/GlRayTracer/Main.cpp"
+  "directory": "C:/Users/zach/Desktop/zmertens-compute/build",
+  "command": "C:\\Strawberry\\c\\bin\\g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Main.cpp.obj -c C:\\Users\\zach\\Desktop\\zmertens-compute\\GlRayTracer\\Main.cpp",
+  "file": "C:/Users/zach/Desktop/zmertens-compute/GlRayTracer/Main.cpp"
 },
 {
-  "directory": "C:/Users/zach/Desktop/GlslComputeRaytracer/build",
-  "command": "C:\\MinGW\\bin\\mingw32-g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -g -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Material.cpp.obj -c C:\\Users\\zach\\Desktop\\GlslComputeRaytracer\\GlRayTracer\\Material.cpp",
-  "file": "C:/Users/zach/Desktop/GlslComputeRaytracer/GlRayTracer/Material.cpp"
+  "directory": "C:/Users/zach/Desktop/zmertens-compute/build",
+  "command": "C:\\Strawberry\\c\\bin\\g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Material.cpp.obj -c C:\\Users\\zach\\Desktop\\zmertens-compute\\GlRayTracer\\Material.cpp",
+  "file": "C:/Users/zach/Desktop/zmertens-compute/GlRayTracer/Material.cpp"
 },
 {
-  "directory": "C:/Users/zach/Desktop/GlslComputeRaytracer/build",
-  "command": "C:\\MinGW\\bin\\mingw32-g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -g -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Player.cpp.obj -c C:\\Users\\zach\\Desktop\\GlslComputeRaytracer\\GlRayTracer\\Player.cpp",
-  "file": "C:/Users/zach/Desktop/GlslComputeRaytracer/GlRayTracer/Player.cpp"
+  "directory": "C:/Users/zach/Desktop/zmertens-compute/build",
+  "command": "C:\\Strawberry\\c\\bin\\g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Player.cpp.obj -c C:\\Users\\zach\\Desktop\\zmertens-compute\\GlRayTracer\\Player.cpp",
+  "file": "C:/Users/zach/Desktop/zmertens-compute/GlRayTracer/Player.cpp"
 },
 {
-  "directory": "C:/Users/zach/Desktop/GlslComputeRaytracer/build",
-  "command": "C:\\MinGW\\bin\\mingw32-g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -g -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\SdlManager.cpp.obj -c C:\\Users\\zach\\Desktop\\GlslComputeRaytracer\\GlRayTracer\\SdlManager.cpp",
-  "file": "C:/Users/zach/Desktop/GlslComputeRaytracer/GlRayTracer/SdlManager.cpp"
+  "directory": "C:/Users/zach/Desktop/zmertens-compute/build",
+  "command": "C:\\Strawberry\\c\\bin\\g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\GlfwHandler.cpp.obj -c C:\\Users\\zach\\Desktop\\zmertens-compute\\GlRayTracer\\GlfwHandler.cpp",
+  "file": "C:/Users/zach/Desktop/zmertens-compute/GlRayTracer/GlfwHandler.cpp"
 },
 {
-  "directory": "C:/Users/zach/Desktop/GlslComputeRaytracer/build",
-  "command": "C:\\MinGW\\bin\\mingw32-g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -g -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Shader.cpp.obj -c C:\\Users\\zach\\Desktop\\GlslComputeRaytracer\\GlRayTracer\\Shader.cpp",
-  "file": "C:/Users/zach/Desktop/GlslComputeRaytracer/GlRayTracer/Shader.cpp"
+  "directory": "C:/Users/zach/Desktop/zmertens-compute/build",
+  "command": "C:\\Strawberry\\c\\bin\\g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Shader.cpp.obj -c C:\\Users\\zach\\Desktop\\zmertens-compute\\GlRayTracer\\Shader.cpp",
+  "file": "C:/Users/zach/Desktop/zmertens-compute/GlRayTracer/Shader.cpp"
 },
 {
-  "directory": "C:/Users/zach/Desktop/GlslComputeRaytracer/build",
-  "command": "C:\\MinGW\\bin\\mingw32-g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -g -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Transform.cpp.obj -c C:\\Users\\zach\\Desktop\\GlslComputeRaytracer\\GlRayTracer\\Transform.cpp",
-  "file": "C:/Users/zach/Desktop/GlslComputeRaytracer/GlRayTracer/Transform.cpp"
+  "directory": "C:/Users/zach/Desktop/zmertens-compute/build",
+  "command": "C:\\Strawberry\\c\\bin\\g++.exe -DGLM_FORCE_RADIANS @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp -std=c++11 -o CMakeFiles\\GLSL_RAYTRACER.dir\\GlRayTracer\\Transform.cpp.obj -c C:\\Users\\zach\\Desktop\\zmertens-compute\\GlRayTracer\\Transform.cpp",
+  "file": "C:/Users/zach/Desktop/zmertens-compute/GlRayTracer/Transform.cpp"
 }
 ]

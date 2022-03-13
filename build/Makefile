@@ -56,10 +56,10 @@ RM = "C:\Program Files\CMake\bin\cmake.exe" -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\zach\Desktop\GlslComputeRaytracer
+CMAKE_SOURCE_DIR = C:\Users\zach\Desktop\zmertens-compute
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\zach\Desktop\GlslComputeRaytracer\build
+CMAKE_BINARY_DIR = C:\Users\zach\Desktop\zmertens-compute\build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -86,9 +86,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\GlslComputeRaytracer\build\CMakeFiles C:\Users\zach\Desktop\GlslComputeRaytracer\build\\CMakeFiles\progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles C:\Users\zach\Desktop\zmertens-compute\build\\CMakeFiles\progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\GlslComputeRaytracer\build\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -127,6 +127,149 @@ GLSL_RAYTRACER: cmake_check_build_system
 GLSL_RAYTRACER/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/build
 .PHONY : GLSL_RAYTRACER/fast
+
+#=============================================================================
+# Target rules for targets named update_mappings
+
+# Build rule for target.
+update_mappings: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 update_mappings
+.PHONY : update_mappings
+
+# fast build rule for target.
+update_mappings/fast:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\src\CMakeFiles\update_mappings.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/build
+.PHONY : update_mappings/fast
+
+#=============================================================================
+# Target rules for targets named glfw
+
+# Build rule for target.
+glfw: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 glfw
+.PHONY : glfw
+
+# fast build rule for target.
+glfw/fast:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\src\CMakeFiles\glfw.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/build
+.PHONY : glfw/fast
+
+#=============================================================================
+# Target rules for targets named boing
+
+# Build rule for target.
+boing: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 boing
+.PHONY : boing
+
+# fast build rule for target.
+boing/fast:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\boing.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/build
+.PHONY : boing/fast
+
+#=============================================================================
+# Target rules for targets named gears
+
+# Build rule for target.
+gears: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 gears
+.PHONY : gears
+
+# fast build rule for target.
+gears/fast:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\gears.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/build
+.PHONY : gears/fast
+
+#=============================================================================
+# Target rules for targets named heightmap
+
+# Build rule for target.
+heightmap: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 heightmap
+.PHONY : heightmap
+
+# fast build rule for target.
+heightmap/fast:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\heightmap.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/build
+.PHONY : heightmap/fast
+
+#=============================================================================
+# Target rules for targets named offscreen
+
+# Build rule for target.
+offscreen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 offscreen
+.PHONY : offscreen
+
+# fast build rule for target.
+offscreen/fast:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\offscreen.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/build
+.PHONY : offscreen/fast
+
+#=============================================================================
+# Target rules for targets named particles
+
+# Build rule for target.
+particles: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 particles
+.PHONY : particles
+
+# fast build rule for target.
+particles/fast:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\particles.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/build
+.PHONY : particles/fast
+
+#=============================================================================
+# Target rules for targets named sharing
+
+# Build rule for target.
+sharing: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 sharing
+.PHONY : sharing
+
+# fast build rule for target.
+sharing/fast:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\sharing.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/build
+.PHONY : sharing/fast
+
+#=============================================================================
+# Target rules for targets named simple
+
+# Build rule for target.
+simple: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 simple
+.PHONY : simple
+
+# fast build rule for target.
+simple/fast:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\simple.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/build
+.PHONY : simple/fast
+
+#=============================================================================
+# Target rules for targets named splitview
+
+# Build rule for target.
+splitview: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 splitview
+.PHONY : splitview
+
+# fast build rule for target.
+splitview/fast:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\splitview.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/build
+.PHONY : splitview/fast
+
+#=============================================================================
+# Target rules for targets named wave
+
+# Build rule for target.
+wave: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 wave
+.PHONY : wave
+
+# fast build rule for target.
+wave/fast:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\wave.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/build
+.PHONY : wave/fast
 
 GlRayTracer/Camera.obj: GlRayTracer/Camera.cpp.obj
 .PHONY : GlRayTracer/Camera.obj
@@ -175,6 +318,30 @@ GlRayTracer/GlUtils.s: GlRayTracer/GlUtils.cpp.s
 GlRayTracer/GlUtils.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/GlRayTracer/GlUtils.cpp.s
 .PHONY : GlRayTracer/GlUtils.cpp.s
+
+GlRayTracer/GlfwHandler.obj: GlRayTracer/GlfwHandler.cpp.obj
+.PHONY : GlRayTracer/GlfwHandler.obj
+
+# target to build an object file
+GlRayTracer/GlfwHandler.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/GlRayTracer/GlfwHandler.cpp.obj
+.PHONY : GlRayTracer/GlfwHandler.cpp.obj
+
+GlRayTracer/GlfwHandler.i: GlRayTracer/GlfwHandler.cpp.i
+.PHONY : GlRayTracer/GlfwHandler.i
+
+# target to preprocess a source file
+GlRayTracer/GlfwHandler.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/GlRayTracer/GlfwHandler.cpp.i
+.PHONY : GlRayTracer/GlfwHandler.cpp.i
+
+GlRayTracer/GlfwHandler.s: GlRayTracer/GlfwHandler.cpp.s
+.PHONY : GlRayTracer/GlfwHandler.s
+
+# target to generate assembly for a file
+GlRayTracer/GlfwHandler.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/GlRayTracer/GlfwHandler.cpp.s
+.PHONY : GlRayTracer/GlfwHandler.cpp.s
 
 GlRayTracer/Light.obj: GlRayTracer/Light.cpp.obj
 .PHONY : GlRayTracer/Light.obj
@@ -272,30 +439,6 @@ GlRayTracer/Player.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/GlRayTracer/Player.cpp.s
 .PHONY : GlRayTracer/Player.cpp.s
 
-GlRayTracer/SdlManager.obj: GlRayTracer/SdlManager.cpp.obj
-.PHONY : GlRayTracer/SdlManager.obj
-
-# target to build an object file
-GlRayTracer/SdlManager.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/GlRayTracer/SdlManager.cpp.obj
-.PHONY : GlRayTracer/SdlManager.cpp.obj
-
-GlRayTracer/SdlManager.i: GlRayTracer/SdlManager.cpp.i
-.PHONY : GlRayTracer/SdlManager.i
-
-# target to preprocess a source file
-GlRayTracer/SdlManager.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/GlRayTracer/SdlManager.cpp.i
-.PHONY : GlRayTracer/SdlManager.cpp.i
-
-GlRayTracer/SdlManager.s: GlRayTracer/SdlManager.cpp.s
-.PHONY : GlRayTracer/SdlManager.s
-
-# target to generate assembly for a file
-GlRayTracer/SdlManager.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/GlRayTracer/SdlManager.cpp.s
-.PHONY : GlRayTracer/SdlManager.cpp.s
-
 GlRayTracer/Shader.obj: GlRayTracer/Shader.cpp.obj
 .PHONY : GlRayTracer/Shader.obj
 
@@ -376,13 +519,27 @@ help:
 	@echo ... depend
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... update_mappings
 	@echo ... GLSL_RAYTRACER
+	@echo ... boing
+	@echo ... gears
+	@echo ... glfw
+	@echo ... heightmap
+	@echo ... offscreen
+	@echo ... particles
+	@echo ... sharing
+	@echo ... simple
+	@echo ... splitview
+	@echo ... wave
 	@echo ... GlRayTracer/Camera.obj
 	@echo ... GlRayTracer/Camera.i
 	@echo ... GlRayTracer/Camera.s
 	@echo ... GlRayTracer/GlUtils.obj
 	@echo ... GlRayTracer/GlUtils.i
 	@echo ... GlRayTracer/GlUtils.s
+	@echo ... GlRayTracer/GlfwHandler.obj
+	@echo ... GlRayTracer/GlfwHandler.i
+	@echo ... GlRayTracer/GlfwHandler.s
 	@echo ... GlRayTracer/Light.obj
 	@echo ... GlRayTracer/Light.i
 	@echo ... GlRayTracer/Light.s
@@ -395,9 +552,6 @@ help:
 	@echo ... GlRayTracer/Player.obj
 	@echo ... GlRayTracer/Player.i
 	@echo ... GlRayTracer/Player.s
-	@echo ... GlRayTracer/SdlManager.obj
-	@echo ... GlRayTracer/SdlManager.i
-	@echo ... GlRayTracer/SdlManager.s
 	@echo ... GlRayTracer/Shader.obj
 	@echo ... GlRayTracer/Shader.i
 	@echo ... GlRayTracer/Shader.s

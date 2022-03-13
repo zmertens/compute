@@ -10,21 +10,21 @@ endif(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
 
+set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/GlRayTracer/extlibs)
+
 # find the required packages
 find_package(GLM REQUIRED)
 message(STATUS "GLM included at ${GLM_INCLUDE_DIRS}")
-# find_package(SDL 2.0 REQUIRED)
-# message(STATUS "Found SDL 2 in ${SFML_INCLUDE_DIR}")
-
-set(GLSL_RAYTRACER_INCLUDE ${GLSL_RAYTRACER_SOURCE_DIR})
-list(APPEND GLSL_RAYTRACER_INCLUDE ${GLM_INCLUDE_DIR})
 add_definitions(-DGLM_FORCE_RADIANS)
 
-# since the 'GLSL_RAYTRACER_LIBS' variable hasn't been set yet
-# - go ahead and set it
-set(GLSL_RAYTRACER_LIBS )
-# list(APPEND GLSL_RAYTRACER_INCLUDE ${SDL_INCLUDE_DIR})
-list(APPEND GLSL_RAYTRACER_LIBS SDL2)
+set(GLFW_DIR ${LIB_DIR}/glfw-3.3-stable)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only")
+set(GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only")
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES ON CACHE BOOL "" FORCE)
+add_subdirectory(${GLFW_DIR})
+
+set(GLSL_RAYTRACER_LIBS "")
 
 if(WIN32)
 	find_package( OpenGL REQUIRED )
@@ -57,14 +57,19 @@ set(GLSL_RAYTRACE_SOURCES
 	GlRayTracer/Main.cpp
 	GlRayTracer/Material.cpp
 	GlRayTracer/Player.cpp
-	GlRayTracer/SdlManager.cpp
+	GlRayTracer/GlfwHandler.cpp
 	GlRayTracer/Shader.cpp
 	GlRayTracer/Transform.cpp
 )
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/GlRayTracer/extlibs)
+
 add_executable( ${PROJECT_NAME} ${GLSL_RAYTRACE_SOURCES} )
-# target_include_directories(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/GlRayTracer/extlibs)
-target_link_libraries( ${PROJECT_NAME} ${SDL_LIBRARIES}  ${GLSL_RAYTRACER_LIBS})
+
+target_link_libraries( ${PROJECT_NAME} glfw ${GLFW_LIBRARIES} ${GLSL_RAYTRACER_LIBS})
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_DIR}/include ${GLM_INCLUDE_DIR}})
+target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
+
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
 
 # copy resources / shader files
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

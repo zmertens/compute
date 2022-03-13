@@ -1,5 +1,7 @@
 #include "GlUtils.hpp"
 
+#include <cstdio>
+
 #include "Utils.hpp"
 
 /**
@@ -38,7 +40,7 @@ bool GlUtils::CheckForOpenGLError(const std::string& file, int line)
         }
 
         std::string fileError = "glError in file " + file + " @ line " + Utils::toString(line) + ", error message: " +  message;
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, fileError.c_str());
+        printf(fileError.c_str());
         glErr = glGetError();
         error = !error;
     }
@@ -140,5 +142,5 @@ void GlUtils::GlDebugCallback(GLenum source, GLenum type, GLuint id,
         + Utils::toString(id) + ")" + ": " + msg;
 
     if (severity != GL_DEBUG_SEVERITY_LOW)
-        SDL_LogDebug(SDL_LOG_CATEGORY_CUSTOM, outStr.c_str());
+        printf(outStr.c_str());
 } // debugCallback()

@@ -3,13 +3,13 @@
 
 # compile C with C:/Strawberry/c/bin/gcc.exe
 # compile CXX with C:/Strawberry/c/bin/g++.exe
-C_DEFINES = -DGLM_FORCE_RADIANS
+C_DEFINES = -DGLFW_DLL -DGLFW_INCLUDE_NONE -DGLM_FORCE_RADIANS
 
 C_INCLUDES = @CMakeFiles/GLSL_RAYTRACER.dir/includes_C.rsp
 
 C_FLAGS = -g
 
-CXX_DEFINES = -DGLM_FORCE_RADIANS
+CXX_DEFINES = -DGLFW_DLL -DGLFW_INCLUDE_NONE -DGLM_FORCE_RADIANS
 
 CXX_INCLUDES = @CMakeFiles/GLSL_RAYTRACER.dir/includes_CXX.rsp
 

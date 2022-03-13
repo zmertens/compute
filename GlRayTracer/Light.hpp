@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include <glm/glm.hpp>
+#include "./extlibs/glm/glm.hpp"
 
 /**
  * @brief The Light class, parent class of PointLight and SpotLight

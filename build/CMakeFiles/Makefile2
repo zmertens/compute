@@ -53,41 +53,108 @@ RM = "C:\Program Files\CMake\bin\cmake.exe" -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\zach\Desktop\GlslComputeRaytracer
+CMAKE_SOURCE_DIR = C:\Users\zach\Desktop\zmertens-compute
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\zach\Desktop\GlslComputeRaytracer\build
+CMAKE_BINARY_DIR = C:\Users\zach\Desktop\zmertens-compute\build
 
 #=============================================================================
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
 all: CMakeFiles/GLSL_RAYTRACER.dir/all
+all: GlRayTracer/extlibs/glfw-3.3-stable/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
-preinstall:
+preinstall: GlRayTracer/extlibs/glfw-3.3-stable/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/GLSL_RAYTRACER.dir/clean
+clean: GlRayTracer/extlibs/glfw-3.3-stable/clean
 .PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory GlRayTracer/extlibs/glfw-3.3-stable
+
+# Recursive "all" directory target.
+GlRayTracer/extlibs/glfw-3.3-stable/all: GlRayTracer/extlibs/glfw-3.3-stable/src/all
+GlRayTracer/extlibs/glfw-3.3-stable/all: GlRayTracer/extlibs/glfw-3.3-stable/examples/all
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/all
+
+# Recursive "preinstall" directory target.
+GlRayTracer/extlibs/glfw-3.3-stable/preinstall: GlRayTracer/extlibs/glfw-3.3-stable/src/preinstall
+GlRayTracer/extlibs/glfw-3.3-stable/preinstall: GlRayTracer/extlibs/glfw-3.3-stable/examples/preinstall
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/preinstall
+
+# Recursive "clean" directory target.
+GlRayTracer/extlibs/glfw-3.3-stable/clean: GlRayTracer/extlibs/glfw-3.3-stable/src/clean
+GlRayTracer/extlibs/glfw-3.3-stable/clean: GlRayTracer/extlibs/glfw-3.3-stable/examples/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/clean
+
+#=============================================================================
+# Directory level rules for directory GlRayTracer/extlibs/glfw-3.3-stable/examples
+
+# Recursive "all" directory target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/all: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/all
+GlRayTracer/extlibs/glfw-3.3-stable/examples/all: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/all
+GlRayTracer/extlibs/glfw-3.3-stable/examples/all: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/all
+GlRayTracer/extlibs/glfw-3.3-stable/examples/all: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/all
+GlRayTracer/extlibs/glfw-3.3-stable/examples/all: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/all
+GlRayTracer/extlibs/glfw-3.3-stable/examples/all: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/all
+GlRayTracer/extlibs/glfw-3.3-stable/examples/all: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/all
+GlRayTracer/extlibs/glfw-3.3-stable/examples/all: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/all
+GlRayTracer/extlibs/glfw-3.3-stable/examples/all: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/all
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/all
+
+# Recursive "preinstall" directory target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/preinstall:
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/preinstall
+
+# Recursive "clean" directory target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/clean: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/clean
+GlRayTracer/extlibs/glfw-3.3-stable/examples/clean: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/clean
+GlRayTracer/extlibs/glfw-3.3-stable/examples/clean: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/clean
+GlRayTracer/extlibs/glfw-3.3-stable/examples/clean: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/clean
+GlRayTracer/extlibs/glfw-3.3-stable/examples/clean: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/clean
+GlRayTracer/extlibs/glfw-3.3-stable/examples/clean: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/clean
+GlRayTracer/extlibs/glfw-3.3-stable/examples/clean: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/clean
+GlRayTracer/extlibs/glfw-3.3-stable/examples/clean: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/clean
+GlRayTracer/extlibs/glfw-3.3-stable/examples/clean: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/clean
+
+#=============================================================================
+# Directory level rules for directory GlRayTracer/extlibs/glfw-3.3-stable/src
+
+# Recursive "all" directory target.
+GlRayTracer/extlibs/glfw-3.3-stable/src/all: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/src/all
+
+# Recursive "preinstall" directory target.
+GlRayTracer/extlibs/glfw-3.3-stable/src/preinstall:
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/src/preinstall
+
+# Recursive "clean" directory target.
+GlRayTracer/extlibs/glfw-3.3-stable/src/clean: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/clean
+GlRayTracer/extlibs/glfw-3.3-stable/src/clean: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/src/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/GLSL_RAYTRACER.dir
 
 # All Build rule for target.
-CMakeFiles/GLSL_RAYTRACER.dir/all:
+CMakeFiles/GLSL_RAYTRACER.dir/all: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\GlslComputeRaytracer\build\CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11 "Built target GLSL_RAYTRACER"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11 "Built target GLSL_RAYTRACER"
 .PHONY : CMakeFiles/GLSL_RAYTRACER.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/GLSL_RAYTRACER.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\GlslComputeRaytracer\build\CMakeFiles 11
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 27
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/GLSL_RAYTRACER.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\GlslComputeRaytracer\build\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
 .PHONY : CMakeFiles/GLSL_RAYTRACER.dir/rule
 
 # Convenience name for target.
@@ -98,6 +165,292 @@ GLSL_RAYTRACER: CMakeFiles/GLSL_RAYTRACER.dir/rule
 CMakeFiles/GLSL_RAYTRACER.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\GLSL_RAYTRACER.dir\build.make CMakeFiles/GLSL_RAYTRACER.dir/clean
 .PHONY : CMakeFiles/GLSL_RAYTRACER.dir/clean
+
+#=============================================================================
+# Target rules for target GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir
+
+# All Build rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/all:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\src\CMakeFiles\update_mappings.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/depend
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\src\CMakeFiles\update_mappings.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=62 "Built target update_mappings"
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/all
+
+# Build rule for subdir invocation for target.
+GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 1
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/rule
+
+# Convenience name for target.
+update_mappings: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/rule
+.PHONY : update_mappings
+
+# clean rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/clean:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\src\CMakeFiles\update_mappings.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/update_mappings.dir/clean
+
+#=============================================================================
+# Target rules for target GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir
+
+# All Build rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\src\CMakeFiles\glfw.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/depend
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\src\CMakeFiles\glfw.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35 "Built target glfw"
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+
+# Build rule for subdir invocation for target.
+GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 16
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/rule
+
+# Convenience name for target.
+glfw: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/rule
+.PHONY : glfw
+
+# clean rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/clean:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\src\CMakeFiles\glfw.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/clean
+
+#=============================================================================
+# Target rules for target GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir
+
+# All Build rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/all: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\boing.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/depend
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\boing.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=12,13,14,15 "Built target boing"
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/all
+
+# Build rule for subdir invocation for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 20
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/rule
+
+# Convenience name for target.
+boing: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/rule
+.PHONY : boing
+
+# clean rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/clean:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\boing.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/boing.dir/clean
+
+#=============================================================================
+# Target rules for target GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir
+
+# All Build rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/all: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\gears.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/depend
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\gears.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=16,17,18,19 "Built target gears"
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/all
+
+# Build rule for subdir invocation for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 20
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/rule
+
+# Convenience name for target.
+gears: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/rule
+.PHONY : gears
+
+# clean rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/clean:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\gears.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/gears.dir/clean
+
+#=============================================================================
+# Target rules for target GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir
+
+# All Build rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/all: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\heightmap.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/depend
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\heightmap.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=36,37,38,39 "Built target heightmap"
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/all
+
+# Build rule for subdir invocation for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 20
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/rule
+
+# Convenience name for target.
+heightmap: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/rule
+.PHONY : heightmap
+
+# clean rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/clean:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\heightmap.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/heightmap.dir/clean
+
+#=============================================================================
+# Target rules for target GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir
+
+# All Build rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/all: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\offscreen.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/depend
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\offscreen.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=40,41,42,43 "Built target offscreen"
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/all
+
+# Build rule for subdir invocation for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 20
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/rule
+
+# Convenience name for target.
+offscreen: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/rule
+.PHONY : offscreen
+
+# clean rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/clean:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\offscreen.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/offscreen.dir/clean
+
+#=============================================================================
+# Target rules for target GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir
+
+# All Build rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/all: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\particles.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/depend
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\particles.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=44,45,46,47,48,49 "Built target particles"
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/all
+
+# Build rule for subdir invocation for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 22
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/rule
+
+# Convenience name for target.
+particles: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/rule
+.PHONY : particles
+
+# clean rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/clean:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\particles.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/particles.dir/clean
+
+#=============================================================================
+# Target rules for target GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir
+
+# All Build rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/all: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\sharing.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/depend
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\sharing.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=50,51,52,53 "Built target sharing"
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/all
+
+# Build rule for subdir invocation for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 20
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/rule
+
+# Convenience name for target.
+sharing: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/rule
+.PHONY : sharing
+
+# clean rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/clean:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\sharing.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/sharing.dir/clean
+
+#=============================================================================
+# Target rules for target GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir
+
+# All Build rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/all: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\simple.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/depend
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\simple.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=54,55,56,57 "Built target simple"
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/all
+
+# Build rule for subdir invocation for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 20
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/rule
+
+# Convenience name for target.
+simple: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/rule
+.PHONY : simple
+
+# clean rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/clean:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\simple.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/simple.dir/clean
+
+#=============================================================================
+# Target rules for target GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir
+
+# All Build rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/all: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\splitview.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/depend
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\splitview.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=58,59,60,61 "Built target splitview"
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/all
+
+# Build rule for subdir invocation for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 20
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/rule
+
+# Convenience name for target.
+splitview: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/rule
+.PHONY : splitview
+
+# clean rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/clean:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\splitview.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/splitview.dir/clean
+
+#=============================================================================
+# Target rules for target GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir
+
+# All Build rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/all: GlRayTracer/extlibs/glfw-3.3-stable/src/CMakeFiles/glfw.dir/all
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\wave.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/depend
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\wave.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles --progress-num=63,64,65,66 "Built target wave"
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/all
+
+# Build rule for subdir invocation for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 20
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\zach\Desktop\zmertens-compute\build\CMakeFiles 0
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/rule
+
+# Convenience name for target.
+wave: GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/rule
+.PHONY : wave
+
+# clean rule for target.
+GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/clean:
+	$(MAKE) $(MAKESILENT) -f GlRayTracer\extlibs\glfw-3.3-stable\examples\CMakeFiles\wave.dir\build.make GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/clean
+.PHONY : GlRayTracer/extlibs/glfw-3.3-stable/examples/CMakeFiles/wave.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

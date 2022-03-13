@@ -1,7 +1,7 @@
 #ifndef PLANE_HPP
 #define PLANE_HPP
 
-#include <glm/glm.hpp>
+#include "./extlibs/glm/glm.hpp"
 
 #include "Material.hpp"
 
