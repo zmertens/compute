@@ -1,17 +1,17 @@
 #include "Shader.hpp"
 
 #include <cstring>
+#include <fstream>
+#include <iostream>
 
-#include <glm/gtc/type_ptr.hpp>
+#include "./extlibs/glm/gtc/type_ptr.hpp"
 
 #include "Utils.hpp"
 
 /**
  * @brief Shader::Shader
- * @param SdlManager
  */
-Shader::Shader(const SdlManager& SdlManager)
-: cSdlManager(SdlManager)
+Shader::Shader()
 {
     createProgram();
 }
@@ -31,7 +31,27 @@ Shader::~Shader()
  */
 void Shader::compileAndAttachShader(const int shaderType, const std::string& filename)
 {
-    std::string shaderCode = cSdlManager.buildStringFromFile(filename);
+    // Build shader string from a file
+    std::string shaderCode = ""; 
+    // Code from LearnOpenGL.com
+    std::ifstream shaderFileStream;
+    // ensure ifstream objects can throw exceptions:
+    shaderFileStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try 
+    {
+        shaderFileStream.open(filename);
+        std::stringstream shaderStrStream;
+        // read file's buffer contents into streams
+        shaderStrStream << shaderFileStream.rdbuf();		
+        // close file handlers
+        shaderFileStream.close();
+        // convert stream into string
+        shaderCode = shaderStrStream.str();		
+    }
+    catch(std::ifstream::failure e)
+    {
+        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+    }
 
     mFileNames.emplace(shaderType, filename);
     GLuint shaderId = compile(shaderType, shaderCode);
@@ -71,7 +91,7 @@ void Shader::linkProgram()
     if (!success)
     {
         glGetProgramInfoLog(mProgram, 512, nullptr, infoLog);
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Program link failed: %s\n", infoLog);
+        printf("Program link failed: %s\n", infoLog);
     }
 }
 
@@ -127,7 +147,7 @@ std::string Shader::getGlslUniforms() const
         char* name = new char[nameBufSize];
 
         glGetProgramResourceName(mProgram, GL_UNIFORM, i, nameBufSize, nullptr, name);
-//        SDL_Log("location = %d, name = %s, type = %s\n",
+       SDL_Log("location = %d, name = %s, type = %s\n",
 //            results[2], name, getStringFromType(results[1]).c_str());
 
         retString += "\tlocation = " + Utils::toString(results[2]) + ", name = "
@@ -380,15 +400,6 @@ GLenum Shader::getShaderType(const int shaderType) const
 }
 
 /**
- * @brief Shader::getSDL_Manager
- * @return
- */
-const SdlManager& Shader::getSdlManager() const
-{
-    return cSdlManager;
-}
-
-/**
  * @brief Shader::getGlslLocations
  * @return
  */
@@ -432,12 +443,11 @@ GLuint Shader::compile(const int shaderType, const std::string& shaderCode)
     if (!success)
     {
         glGetShaderInfoLog(shaderId, 512, nullptr, infoLog);
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR,
-            "%s -- Shader Compilation Failed: %s\n", mFileNames.at(shaderType).c_str(), infoLog);
+        printf("%s -- Shader Compilation Failed: %s\n", mFileNames.at(shaderType).c_str(), infoLog);
     }
     else if (success)
     {
-        SDL_Log("%s compiled successfully\n", mFileNames.at(shaderType).c_str(), infoLog);
+        printf("%s compiled successfully\n", mFileNames.at(shaderType).c_str(), infoLog);
     }
 
     return shaderId;
@@ -468,12 +478,11 @@ GLuint Shader::compile(const int shaderType, const GLchar* shaderCode)
     if (!success)
     {
         glGetShaderInfoLog(shaderId, 512, nullptr, infoLog);
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR,
-            "%s -- Shader Compilation Failed: %s\n", mFileNames.at(shaderType).c_str(), infoLog);
+        printf("%s -- Shader Compilation Failed: %s\n", mFileNames.at(shaderType).c_str(), infoLog);
     }
     else if (success)
     {
-        SDL_Log("%s compiled successfully\n", mFileNames.at(shaderType).c_str(), infoLog);
+        printf("%s compiled successfully\n", mFileNames.at(shaderType).c_str(), infoLog);
     }
 
     return shaderId;
@@ -528,7 +537,7 @@ GLint Shader::getUniformLocation(const std::string& str)
         GLint loc = glGetUniformLocation(mProgram, str.c_str());
         if (loc == -1)
         {
-            SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s does not exist in the shader\n", str.c_str());
+            printf("%s does not exist in the shader\n", str.c_str());
         }
         else
         {

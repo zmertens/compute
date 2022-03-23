@@ -213,7 +213,7 @@ vec3 traceRay(inout Ray theRay)
 			float g = float(coords.y) / float(size.y);
 			float b = fract(uTime);
 			vec3 bg = vec3(r, g, b);//vec3(sin(r * uTime), cos(uTime), r);
-			finalColor = bg;
+			finalColor += bg;
 			break;
 		}
 

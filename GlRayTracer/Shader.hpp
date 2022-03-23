@@ -5,9 +5,9 @@
 #include <memory>
 #include <unordered_map>
 
-#include <glm/glm.hpp>
+#include "./extlibs/glm/glm.hpp"
 
-#include "SdlManager.hpp"
+#include "GlfwHandler.hpp"
 
 namespace ShaderTypes
 {
@@ -24,7 +24,7 @@ class Shader final
 public:
     typedef std::unique_ptr<Shader> Ptr;
 public:
-    explicit Shader(const SdlManager& sdlManager);
+    explicit Shader();
     virtual ~Shader();
 
     void compileAndAttachShader(const int shaderType, const std::string& filename);
@@ -59,12 +59,10 @@ public:
 
     unsigned int getProgramHandle() const;
     GLenum getShaderType(const int shaderType) const;
-    const SdlManager& getSdlManager() const;
     std::unordered_map<std::string, GLint> getGlslLocations() const;
     std::unordered_map<int, std::string> getFileNames() const;
 
 private:
-    const SdlManager& cSdlManager;
     GLint mProgram;
     std::unordered_map<std::string, GLint> mGlslLocations;
     std::unordered_map<int, std::string> mFileNames;

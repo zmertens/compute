@@ -1,8 +1,8 @@
 #include "Transform.hpp"
 
 #define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "./extlibs/glm/gtx/transform.hpp"
+#include "./extlibs/glm/gtc/matrix_transform.hpp"
 
 /**
  * @brief Transform::Transform

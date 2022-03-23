@@ -5,9 +5,9 @@
 #include <unordered_map>
 #include <cstdint>
 
-#include <glm/glm.hpp>
+#include "./extlibs/glm/glm.hpp"
 
-class SdlManager;
+class GlfwHandler;
 class Camera;
 
 class Player final
@@ -18,7 +18,7 @@ public:
     glm::vec3 getPosition() const;
     void setPosition(const glm::vec3& position);
     void move(const glm::vec3& vel, float dt);
-    void input(const SdlManager& sdlManager, const float mouseWheelDelta,
+    void input(const GlfwHandler& glfwHandler, const float mouseWheelDelta,
         const glm::vec2& coords,
         std::unordered_map<uint8_t, bool> inputs);
     void update(const float dt, const double timeSinceInit);

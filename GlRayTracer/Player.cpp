@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "SdlManager.hpp"
+#include "GlfwHandler.hpp"
 #include "Camera.hpp"
 
 const float Player::scMouseSensitivity = 1.0f;
@@ -59,43 +59,43 @@ void Player::move(const glm::vec3& vel, float dt)
 /**
  * (currentMouseStates & SDL_BUTTON(SDL_BUTTON_LEFT)
  * @brief Player::input
- * @param sdlManager
+ * @param glfwHandler
  * @param mouseWheelDelta
  * @param coords
  * @param inputs
  */
-void Player::input(const SdlManager& sdlManager, const float mouseWheelDelta,
+void Player::input(const GlfwHandler& glfwHandler, const float mouseWheelDelta,
     const glm::vec2& coords,
-    std::unordered_map<uint8_t, bool> inputs)
+    std::unordered_map<std::uint8_t, bool> inputs)
 {
     glm::vec2 winCenter = glm::vec2(
-        static_cast<float>(sdlManager.getWindowWidth()) * 0.5f,
-        static_cast<float>(sdlManager.getWindowHeight()) * 0.5f);
+        static_cast<float>(GlfwHandler::GLFW_WINDOW_X) * 0.5f,
+        static_cast<float>(GlfwHandler::GLFW_WINDOW_Y) * 0.5f);
 
     // keyboard movements
-    if (inputs[SDL_SCANCODE_W])
-    {
-        inputs.at(SDL_SCANCODE_W) = false;
-        mMovementDir += mFirstPersonCamera.getTarget();
-    }
+    // if (inputs[SDL_SCANCODE_W])
+    // {
+    //     inputs.at(SDL_SCANCODE_W) = false;
+    //     mMovementDir += mFirstPersonCamera.getTarget();
+    // }
 
-    if (inputs[SDL_SCANCODE_S])
-    {
-        inputs.at(SDL_SCANCODE_S) = false;
-        mMovementDir -= mFirstPersonCamera.getTarget();
-    }
+    // if (inputs[SDL_SCANCODE_S])
+    // {
+    //     inputs.at(SDL_SCANCODE_S) = false;
+    //     mMovementDir -= mFirstPersonCamera.getTarget();
+    // }
 
-    if (inputs[SDL_SCANCODE_A])
-    {
-        inputs.at(SDL_SCANCODE_A) = false;
-        mMovementDir -= mFirstPersonCamera.getRight();
-    }
+    // if (inputs[SDL_SCANCODE_A])
+    // {
+    //     inputs.at(SDL_SCANCODE_A) = false;
+    //     mMovementDir -= mFirstPersonCamera.getRight();
+    // }
 
-    if (inputs[SDL_SCANCODE_D])
-    {
-        inputs.at(SDL_SCANCODE_D) = false;
-        mMovementDir += mFirstPersonCamera.getRight();
-    }
+    // if (inputs[SDL_SCANCODE_D])
+    // {
+    //     inputs.at(SDL_SCANCODE_D) = false;
+    //     mMovementDir += mFirstPersonCamera.getRight();
+    // }
 
     // mouse wheel events
     if (mouseWheelDelta != 0)
@@ -110,7 +110,7 @@ void Player::input(const SdlManager& sdlManager, const float mouseWheelDelta,
         if (xOffset || yOffset)
         {
             mFirstPersonCamera.rotate(xOffset * scMouseSensitivity, yOffset * scMouseSensitivity, false, false);
-            SDL_WarpMouseInWindow(sdlManager.getSdlWindow(), winCenter.x, winCenter.y);
+            // SDL_WarpMouseInWindow(glfwHandler.getSdlWindow(), winCenter.x, winCenter.y);
         }
     }
 }

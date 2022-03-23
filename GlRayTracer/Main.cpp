@@ -1,19 +1,23 @@
+// A compute raytracer based on
+// https://github.com/LWJGL/lwjgl3-wiki/wiki/2.6.1.-Ray-tracing-with-OpenGL-Compute-Shaders
+
 #include <cstdlib>
 #include <vector>
 #include <unordered_map>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cstdint>
 
-#include <glm/gtc/constants.hpp> // 2pi
-#include <glm/gtc/matrix_transform.hpp>
+#include "extlibs/glm/gtc/constants.hpp"
+#include "extlibs/glm/gtc/matrix_transform.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/transform.hpp>
+#include "extlibs/glm/gtx/transform.hpp"
 
 #include "Shader.hpp"
 #include "Camera.hpp"
 #include "Player.hpp"
-#include "SdlManager.hpp"
+#include "GlfwHandler.hpp"
 #include "Utils.hpp"
 #include "GlUtils.hpp"
 #include "Light.hpp"
@@ -25,7 +29,7 @@
 #define TOTAL_SPHERES 20
 #define TOTAL_LIGHTS 5
 
-static std::unordered_map<Uint8, bool> sKeyMap;
+static std::unordered_map<std::uint8_t, bool> sKeyMap;
 
 Camera gCamera (glm::vec3(0.0f), 0.0f, 0.0f, 75.0f, 0.1f, 1000.0f);
 Player gPlayer (gCamera);
@@ -34,33 +38,35 @@ glm::vec3 gClearColor (0.0f);
 void initCompute(Shader& compute, GLuint shapeSSBO,
     std::vector<Sphere>& spheres, Plane& plane,
     std::vector<Light>& lights);
-void input(SdlManager& sdlManager, const float mouseWheelDelta, bool& running);
+void input(GlfwHandler& glfwHandler, const float mouseWheelDelta, bool& running);
 void update(const float dt, const double timeSinceInit);
 void render(Shader& compute, Shader& raytracer, float ar,
     GLuint vao, GLuint tex, GLenum type = GL_TRIANGLE_STRIP);
-void finish(SdlManager& sdl);
-void sdlEvents(SdlManager& sdlManager,
-    SDL_Event& event, float& mouseWheelDy, bool& running);
+
+void glfwEvents(GlfwHandler& glfwHandler, float& mouseWheelDy, bool& running);
 void printFramesToConsole(unsigned int& frameCounter, float& timeSinceLastUpdate, const float dt);
 void printOpenGlInfo();
 
 int main()
 {
-    SdlManager sdlManager (
-        SdlWindow::Settings(SDL_INIT_VIDEO,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN, false),
-        "OpenGL RayTracer", 1080, 720);
+    std::cout << "Hello Compute" << std::endl;
+    
+    GlfwHandler glfwHandler;
+    bool success = glfwHandler.init();
+    if (!success) {
+        std::cout << "GLFW Not initialized" << std::endl;
+    }
 
     printOpenGlInfo();
 
-    Shader tracerShader (sdlManager);
-    tracerShader.compileAndAttachShader(ShaderTypes::VERTEX_SHADER, "../shaders/raytracer.vert.glsl");
-    tracerShader.compileAndAttachShader(ShaderTypes::FRAGMENT_SHADER, "../shaders/raytracer.frag.glsl");
+    Shader tracerShader;
+    tracerShader.compileAndAttachShader(ShaderTypes::VERTEX_SHADER, "./shaders/raytracer.vert.glsl");
+    tracerShader.compileAndAttachShader(ShaderTypes::FRAGMENT_SHADER, "./shaders/raytracer.frag.glsl");
     tracerShader.linkProgram();
     tracerShader.bind();
 
-    Shader computeShader (sdlManager);
-    computeShader.compileAndAttachShader(ShaderTypes::COMPUTE_SHADER, "../shaders/raytracer.cs.glsl");
+    Shader computeShader;
+    computeShader.compileAndAttachShader(ShaderTypes::COMPUTE_SHADER, "./shaders/raytracer.cs.glsl");
     computeShader.linkProgram();
     computeShader.bind();
 
@@ -82,7 +88,8 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F,
-        static_cast<GLsizei>(sdlManager.getWindowWidth()), static_cast<GLsizei>(sdlManager.getWindowHeight()));
+        static_cast<GLsizei>(GlfwHandler::GLFW_WINDOW_X),
+        static_cast<GLsizei>(GlfwHandler::GLFW_WINDOW_Y));
     glBindImageTexture(0, screenTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
     glGenVertexArrays(1, &vao);
@@ -98,10 +105,12 @@ int main()
     float timeSinceLastUpdate = 0.0f;
     float mouseWheelDelta = 0.0f;
     bool running = true;
-    while (running)
+    while (!glfwWindowShouldClose(glfwHandler.getGlfwWindow()))
     {
-        static double lastTime = static_cast<double>(SDL_GetTicks()) / 1000.0;
-        double currentTime = static_cast<double>(SDL_GetTicks()) / 1000.0;
+        glfwPollEvents();
+
+        static double lastTime = static_cast<double>(glfwGetTime()) / 1000.0;
+        double currentTime = static_cast<double>(glfwGetTime()) / 1000.0;
         float deltaTime = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
         accumulator += deltaTime;
@@ -109,15 +118,15 @@ int main()
         while (accumulator > timePerFrame)
         {
             accumulator -= timePerFrame;
-            input(sdlManager, mouseWheelDelta, running);
-            update(deltaTime, timePerFrame);
+            // input(glfwHandler, mouseWheelDelta, running);
+            // update(deltaTime, timePerFrame);
         }
 
-        float ar = static_cast<float>(sdlManager.getWindowWidth()) / static_cast<float>(sdlManager.getWindowHeight());
+        float ar = static_cast<float>(GlfwHandler::GLFW_WINDOW_X) / static_cast<float>(GlfwHandler::GLFW_WINDOW_Y);
 
         render(computeShader, tracerShader, ar, vao, screenTex);
 
-        sdlManager.swapBuffers();
+        glfwHandler.swapBuffers();
 
         printFramesToConsole(frameCounter, timeSinceLastUpdate, deltaTime);
     }
@@ -126,7 +135,7 @@ int main()
     glDeleteBuffers(1, &shapeSSBO);
     glDeleteTextures(1, &screenTex);
 
-    finish(sdlManager);
+    glfwHandler.cleanUp();
 
     return EXIT_SUCCESS;
 }
@@ -243,39 +252,39 @@ void initCompute(Shader& compute, GLuint shapeSSBO,
     compute.setUniform("uPlane.material.reflective", plane.material.getReflectivity());
     compute.setUniform("uPlane.point", plane.point);
     compute.setUniform("uPlane.normal", plane.normal);
-} // initShaders
+} // initCompute
 
-void input(SdlManager& sdlManager, const float mouseWheelDelta, bool& running)
-{
-    float mouseWheelDy = 0;
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
-    {
-        sdlEvents(sdlManager, event, mouseWheelDy, running);
-    } // events
+// void input(GlfwHandler& glfwHandler, const float mouseWheelDelta, bool& running)
+// {
+//     float mouseWheelDy = 0;
+//     SDL_Event event;
+//     while (SDL_PollEvent(&event))
+//     {
+//         glfwEvents(glfwHandler, event, mouseWheelDy, running);
+//     } // events
 
-    const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr);
-    SDL_PumpEvents(); // don't do this on a seperate thread?
+//     const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr);
+//     SDL_PumpEvents(); // don't do this on a seperate thread?
 
-    //sKeyMap[SDL_SCANCODE_TAB] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_TAB]);
-    sKeyMap[SDL_SCANCODE_W] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_W]);
-    sKeyMap[SDL_SCANCODE_S] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_S]);
-    sKeyMap[SDL_SCANCODE_A] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_A]);
-    sKeyMap[SDL_SCANCODE_D] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_D]);
+//     //sKeyMap[SDL_SCANCODE_TAB] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_TAB]);
+//     sKeyMap[SDL_SCANCODE_W] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_W]);
+//     sKeyMap[SDL_SCANCODE_S] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_S]);
+//     sKeyMap[SDL_SCANCODE_A] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_A]);
+//     sKeyMap[SDL_SCANCODE_D] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_D]);
 
-    int coordX;
-    int coordY;
-    const Uint32 currentMouseStates = SDL_GetMouseState(&coordX, &coordY);
-    glm::vec2 coords = glm::vec2(coordX, coordY);
+//     int coordX;
+//     int coordY;
+//     const Uint32 currentMouseStates = SDL_GetMouseState(&coordX, &coordY);
+//     glm::vec2 coords = glm::vec2(coordX, coordY);
 
-    // handle realtime input
-    gPlayer.input(sdlManager, mouseWheelDy, coords, sKeyMap);
-}
+//     // handle realtime input
+//     gPlayer.input(glfwHandler, mouseWheelDy, coords, sKeyMap);
+// }
 
-void update(const float dt, const double timeSinceInit)
-{
-    gPlayer.update(dt, timeSinceInit);
-}
+// void update(const float dt, const double timeSinceInit)
+// {
+//     gPlayer.update(dt, timeSinceInit);
+// }
 
 /**
  * @brief render
@@ -296,7 +305,7 @@ void render(Shader& compute, Shader& raytracer, float ar, GLuint vao, GLuint tex
     // glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, mShapeSSBO);
     // GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
 
-    double time = static_cast<double>(SDL_GetTicks()) / 1000.0;
+    double time = static_cast<double>(glfwGetTime()) / 1000.0;
     compute.setUniform("uTime", time);
     compute.setUniform("uCamera.eye", gCamera.getPosition());
     compute.setUniform("uCamera.far", gCamera.getFar());
@@ -328,64 +337,60 @@ void render(Shader& compute, Shader& raytracer, float ar, GLuint vao, GLuint tex
     glBindTexture(GL_TEXTURE_2D, tex);
     glBindVertexArray(vao);
     glDrawArrays(type, 0, 4);
-}
+} // render
 
-void finish(SdlManager& sdl)
-{
-    sdl.cleanUp();
-}
 
-void sdlEvents(SdlManager& sdlManager,
-    SDL_Event& event, float& mouseWheelDy, bool& running)
-{
-    if (event.type == SDL_QUIT)
-    {
-        running = false;
-    }
-    else if (event.type == SDL_WINDOWEVENT)
-    {
-        if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-        {
-            unsigned int newWidth = event.window.data1;
-            unsigned int newHeight = event.window.data2;
-            glViewport(0, 0, newWidth, newHeight);
-        }
-    }
-    else if (event.type == SDL_MOUSEWHEEL)
-        mouseWheelDy = event.wheel.y;
-    else if (event.type == SDL_KEYDOWN)
-    {
-        if (event.key.keysym.sym == SDLK_TAB)
-        {
-            // flip mouse lock
-            gPlayer.setMouseLocked(!gPlayer.getMouseLocked());
-            if (gPlayer.getMouseLocked())
-                SDL_ShowCursor(SDL_DISABLE);
-            else
-                SDL_ShowCursor(SDL_ENABLE);
-        }
-        else if (event.key.keysym.sym == SDLK_ESCAPE)
-        {
-            running = false;
-        }
-    }
-    else if ((sdlManager.getWindowSettings().initFlags & SDL_INIT_JOYSTICK) &&
-        event.type == SDL_JOYBUTTONDOWN)
-    {
-        if (event.jbutton.button == SDL_CONTROLLER_BUTTON_X &&
-            sdlManager.hapticRumblePlay(0.75, 500) != 0)
-                SDL_LogError(SDL_LOG_CATEGORY_ERROR, SDL_GetError());
-    }
-} // sdlEvents
+// void glfwEvents(GlfwHandler& glfwHandler,
+//     SDL_Event& event, float& mouseWheelDy, bool& running)
+// {
+//     if (event.type == SDL_QUIT)
+//     {
+//         running = false;
+//     }
+//     else if (event.type == SDL_WINDOWEVENT)
+//     {
+//         if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+//         {
+//             unsigned int newWidth = event.window.data1;
+//             unsigned int newHeight = event.window.data2;
+//             glViewport(0, 0, newWidth, newHeight);
+//         }
+//     }
+//     else if (event.type == SDL_MOUSEWHEEL)
+//         mouseWheelDy = event.wheel.y;
+//     else if (event.type == SDL_KEYDOWN)
+//     {
+//         if (event.key.keysym.sym == SDLK_TAB)
+//         {
+//             // flip mouse lock
+//             gPlayer.setMouseLocked(!gPlayer.getMouseLocked());
+//             if (gPlayer.getMouseLocked())
+//                 SDL_ShowCursor(SDL_DISABLE);
+//             else
+//                 SDL_ShowCursor(SDL_ENABLE);
+//         }
+//         else if (event.key.keysym.sym == SDLK_ESCAPE)
+//         {
+//             running = false;
+//         }
+//     }
+//     else if ((glfwHandler.getWindowSettings().initFlags & SDL_INIT_JOYSTICK) &&
+//         event.type == SDL_JOYBUTTONDOWN)
+//     {
+//         if (event.jbutton.button == SDL_CONTROLLER_BUTTON_X &&
+//             glfwHandler.hapticRumblePlay(0.75, 500) != 0)
+//                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, SDL_GetError());
+//     }
+// } // glfwEvents
 
 void printFramesToConsole(unsigned int& frameCounter, float& timeSinceLastUpdate, const float dt)
 {
-    ++frameCounter;
+    frameCounter += 1;
     timeSinceLastUpdate += dt;
     if (timeSinceLastUpdate >= 1.0f)
     {
-        SDL_Log("FPS: %u\n", frameCounter);
-        SDL_Log("time (us) / frame: %f\n", timeSinceLastUpdate / static_cast<float>(frameCounter));
+        printf("FPS: %u\n", frameCounter);
+        printf("time (us) / frame: %f\n", timeSinceLastUpdate / static_cast<float>(frameCounter));
 
         frameCounter = 0;
         timeSinceLastUpdate -= 1.0f;
@@ -414,5 +419,5 @@ void printOpenGlInfo()
     ss << "\nGL Version   : " << major << "." << minor;
     ss << "\nGLSL Version : " << glslVersion;
     ss << "\n-------------------------------------------------------------\n";
-    SDL_Log(ss.str().c_str());
+    printf(ss.str().c_str());
 }

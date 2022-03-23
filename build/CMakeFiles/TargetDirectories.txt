@@ -1,3 +1,0 @@
-C:/Users/zach/Desktop/GlslComputeRaytracer/build/CMakeFiles/GLSL_RAYTRACER.dir
-C:/Users/zach/Desktop/GlslComputeRaytracer/build/CMakeFiles/edit_cache.dir
-C:/Users/zach/Desktop/GlslComputeRaytracer/build/CMakeFiles/rebuild_cache.dir
