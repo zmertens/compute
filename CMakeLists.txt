@@ -4,7 +4,7 @@ cmake_policy(SET CMP0054 NEW)
 # ENABLE CMP0074: USE *_ROOT PATH variables
 cmake_policy(SET CMP0074 NEW)
 
-project("GLSL_RAYTRACER" LANGUAGES C CXX)
+project("COMPUTE" LANGUAGES C CXX)
 
 # Require C++ standard
 set(CMAKE_CXX_STANDARD 14)
@@ -84,7 +84,7 @@ string(TOLOWER "${CMAKE_BUILD_TYPE}" cmake_build_type_tolower)
 if(cmake_build_type_tolower STREQUAL "debug" OR
     cmake_build_type_tolower STREQUAL "relwithdebinfo")
     target_compile_definitions(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_DEBUG)
-    message("Enabling NEEDLE_DEBUG mode")
+    message("Enabling DEBUG mode")
 endif()
 
 # copy resources / shader files
