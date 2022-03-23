@@ -2,11 +2,12 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <cstring>
 #include <iostream>
 
-#if defined(NEEDLE_DEBUG)
+#if defined(COMPUTE_DEBUG)
 #include <iostream>
-#endif // NEEDLE_DEBUG
+#endif // COMPUTE_DEBUG
 
 /**
  * Static
@@ -74,9 +75,9 @@ bool GlfwHandler::init()
         return !success;
     }
 
-#if defined(NEEDLE_DEBUG)
+#if defined(COMPUTE_DEBUG)
     cout << "Making Glfw current context" << endl;
-#endif // NEEDLE_DEBUG
+#endif // COMPUTE_DEBUG
 
     glfwMakeContextCurrent(mGlfwWindow);
     // Enable Vsync
