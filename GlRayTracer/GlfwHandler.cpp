@@ -5,10 +5,6 @@
 #include <cstring>
 #include <iostream>
 
-#if defined(COMPUTE_DEBUG)
-#include <iostream>
-#endif // COMPUTE_DEBUG
-
 /**
  * Static
  */
@@ -67,7 +63,8 @@ bool GlfwHandler::init()
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-
+    glfwWindowHint(GLFW_SAMPLES, 8);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     mGlfwWindow = glfwCreateWindow(GLFW_WINDOW_X, GLFW_WINDOW_Y, mTitle.c_str(), nullptr, nullptr);
     if (!mGlfwWindow)
     {
@@ -75,14 +72,10 @@ bool GlfwHandler::init()
         return !success;
     }
 
-#if defined(COMPUTE_DEBUG)
-    cout << "Making Glfw current context" << endl;
-#endif // COMPUTE_DEBUG
-
     glfwMakeContextCurrent(mGlfwWindow);
     // Enable Vsync
     glfwSwapInterval(V_SYNC_FLAG);
-
+    
     glfwSetErrorCallback(setErrorCallback);
     glfwSetKeyCallback(mGlfwWindow, setKeyCallback);
 
@@ -94,8 +87,8 @@ bool GlfwHandler::init()
     image.height = 32;
     image.pixels = pixels;
     
-    // mGlfwCursor = glfwCreateCursor(&image, 0, 0);
-    mGlfwCursor = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
+    mGlfwCursor = glfwCreateCursor(&image, 0, 0);
+    // mGlfwCursor = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
     if (mGlfwCursor == nullptr)
     {
         fprintf(stderr, "Cursor creation failed");

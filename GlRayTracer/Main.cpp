@@ -59,6 +59,8 @@ int main()
 
     printOpenGlInfo();
 
+    glEnable(GL_MULTISAMPLE);
+
     Shader tracerShader;
     tracerShader.compileAndAttachShader(ShaderTypes::VERTEX_SHADER, "./shaders/raytracer.vert.glsl");
     tracerShader.compileAndAttachShader(ShaderTypes::FRAGMENT_SHADER, "./shaders/raytracer.frag.glsl");
