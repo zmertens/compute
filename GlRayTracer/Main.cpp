@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <vector>
+#include <memory>
 #include <unordered_map>
 #include <iostream>
 #include <fstream>
@@ -111,6 +112,12 @@ int main()
     {
         glfwPollEvents();
 
+        // Reset input keys to false ever frame
+        auto&& inputs = std::move(glfwHandler.getKeys());
+        for (auto input : inputs) {
+            input = false;
+        }
+
         static double lastTime = static_cast<double>(glfwGetTime()) / 1000.0;
         double currentTime = static_cast<double>(glfwGetTime()) / 1000.0;
         float deltaTime = static_cast<float>(currentTime - lastTime);
@@ -120,8 +127,8 @@ int main()
         while (accumulator > timePerFrame)
         {
             accumulator -= timePerFrame;
-            // input(glfwHandler, mouseWheelDelta, running);
-            // update(deltaTime, timePerFrame);
+            input(glfwHandler, mouseWheelDelta, running);
+            update(deltaTime, timePerFrame);
         }
 
         float ar = static_cast<float>(GlfwHandler::GLFW_WINDOW_X) / static_cast<float>(GlfwHandler::GLFW_WINDOW_Y);
@@ -129,7 +136,7 @@ int main()
         render(computeShader, tracerShader, ar, vao, screenTex);
 
         glfwHandler.swapBuffers();
-
+        // glfwPollEvents();
         printFramesToConsole(frameCounter, timeSinceLastUpdate, deltaTime);
     }
 
@@ -256,37 +263,22 @@ void initCompute(Shader& compute, GLuint shapeSSBO,
     compute.setUniform("uPlane.normal", plane.normal);
 } // initCompute
 
-// void input(GlfwHandler& glfwHandler, const float mouseWheelDelta, bool& running)
-// {
-//     float mouseWheelDy = 0;
-//     SDL_Event event;
-//     while (SDL_PollEvent(&event))
-//     {
-//         glfwEvents(glfwHandler, event, mouseWheelDy, running);
-//     } // events
+void input(GlfwHandler& glfwHandler, const float mouseWheelDelta, bool& running)
+{
+    float mouseWheelDy = 0;
 
-//     const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr);
-//     SDL_PumpEvents(); // don't do this on a seperate thread?
+    double coordX = 0.0, coordY = 0.0;
+    glfwGetCursorPos(glfwHandler.getGlfwWindow(), &coordX, &coordY);
+    glm::vec2 coords = glm::vec2(coordX, coordY);
 
-//     //sKeyMap[SDL_SCANCODE_TAB] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_TAB]);
-//     sKeyMap[SDL_SCANCODE_W] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_W]);
-//     sKeyMap[SDL_SCANCODE_S] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_S]);
-//     sKeyMap[SDL_SCANCODE_A] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_A]);
-//     sKeyMap[SDL_SCANCODE_D] = static_cast<bool>(currentKeyStates[SDL_SCANCODE_D]);
+    // handle realtime input
+    gPlayer.input(glfwHandler, mouseWheelDy, coords);
+}
 
-//     int coordX;
-//     int coordY;
-//     const Uint32 currentMouseStates = SDL_GetMouseState(&coordX, &coordY);
-//     glm::vec2 coords = glm::vec2(coordX, coordY);
-
-//     // handle realtime input
-//     gPlayer.input(glfwHandler, mouseWheelDy, coords, sKeyMap);
-// }
-
-// void update(const float dt, const double timeSinceInit)
-// {
-//     gPlayer.update(dt, timeSinceInit);
-// }
+void update(const float dt, const double timeSinceInit)
+{
+    gPlayer.update(dt, timeSinceInit);
+}
 
 /**
  * @brief render
@@ -341,55 +333,11 @@ void render(Shader& compute, Shader& raytracer, float ar, GLuint vao, GLuint tex
     glDrawArrays(type, 0, 4);
 } // render
 
-
-// void glfwEvents(GlfwHandler& glfwHandler,
-//     SDL_Event& event, float& mouseWheelDy, bool& running)
-// {
-//     if (event.type == SDL_QUIT)
-//     {
-//         running = false;
-//     }
-//     else if (event.type == SDL_WINDOWEVENT)
-//     {
-//         if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-//         {
-//             unsigned int newWidth = event.window.data1;
-//             unsigned int newHeight = event.window.data2;
-//             glViewport(0, 0, newWidth, newHeight);
-//         }
-//     }
-//     else if (event.type == SDL_MOUSEWHEEL)
-//         mouseWheelDy = event.wheel.y;
-//     else if (event.type == SDL_KEYDOWN)
-//     {
-//         if (event.key.keysym.sym == SDLK_TAB)
-//         {
-//             // flip mouse lock
-//             gPlayer.setMouseLocked(!gPlayer.getMouseLocked());
-//             if (gPlayer.getMouseLocked())
-//                 SDL_ShowCursor(SDL_DISABLE);
-//             else
-//                 SDL_ShowCursor(SDL_ENABLE);
-//         }
-//         else if (event.key.keysym.sym == SDLK_ESCAPE)
-//         {
-//             running = false;
-//         }
-//     }
-//     else if ((glfwHandler.getWindowSettings().initFlags & SDL_INIT_JOYSTICK) &&
-//         event.type == SDL_JOYBUTTONDOWN)
-//     {
-//         if (event.jbutton.button == SDL_CONTROLLER_BUTTON_X &&
-//             glfwHandler.hapticRumblePlay(0.75, 500) != 0)
-//                 SDL_LogError(SDL_LOG_CATEGORY_ERROR, SDL_GetError());
-//     }
-// } // glfwEvents
-
 void printFramesToConsole(unsigned int& frameCounter, float& timeSinceLastUpdate, const float dt)
 {
     frameCounter += 1;
     timeSinceLastUpdate += dt;
-    if (timeSinceLastUpdate >= 1.0f)
+    if (frameCounter >= 60)
     {
         printf("FPS: %u\n", frameCounter);
         printf("time (us) / frame: %f\n", timeSinceLastUpdate / static_cast<float>(frameCounter));

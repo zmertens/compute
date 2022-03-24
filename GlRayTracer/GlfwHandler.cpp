@@ -26,6 +26,26 @@ void GlfwHandler::setKeyCallback(GLFWwindow* window, int key, int scancode, int 
     {
         mInputs[key] = true;
     }
+    else if (key == GLFW_KEY_W && action == GLFW_PRESS)
+    {
+        mInputs[key] = true;
+    }
+    else if (key == GLFW_KEY_A && action == GLFW_PRESS)
+    {
+        mInputs[key] = true;
+    }
+    else if (key == GLFW_KEY_S && action == GLFW_PRESS)
+    {
+        mInputs[key] = true;
+    }
+    else if (key == GLFW_KEY_D && action == GLFW_PRESS)
+    {
+        mInputs[key] = true;
+    }
+    else if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+    {
+        mInputs[key] = true;
+    } 
 }
 
 GlfwHandler::GlfwHandler()

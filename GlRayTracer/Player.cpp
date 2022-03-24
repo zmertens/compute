@@ -65,37 +65,39 @@ void Player::move(const glm::vec3& vel, float dt)
  * @param inputs
  */
 void Player::input(const GlfwHandler& glfwHandler, const float mouseWheelDelta,
-    const glm::vec2& coords,
-    std::unordered_map<std::uint8_t, bool> inputs)
+    const glm::vec2& coords)
 {
     glm::vec2 winCenter = glm::vec2(
         static_cast<float>(GlfwHandler::GLFW_WINDOW_X) * 0.5f,
         static_cast<float>(GlfwHandler::GLFW_WINDOW_Y) * 0.5f);
 
+    auto inputs = glfwHandler.getKeys();
+
+    // Mouse lock
+    if (inputs.at(GLFW_KEY_TAB)) {
+        setMouseLocked(!getMouseLocked());
+    }
+
     // keyboard movements
-    // if (inputs[SDL_SCANCODE_W])
-    // {
-    //     inputs.at(SDL_SCANCODE_W) = false;
-    //     mMovementDir += mFirstPersonCamera.getTarget();
-    // }
+    if (inputs.at(GLFW_KEY_W))
+    {
+        mMovementDir += mFirstPersonCamera.getTarget();
+    }
 
-    // if (inputs[SDL_SCANCODE_S])
-    // {
-    //     inputs.at(SDL_SCANCODE_S) = false;
-    //     mMovementDir -= mFirstPersonCamera.getTarget();
-    // }
+    if (inputs.at(GLFW_KEY_S))
+    {
+        mMovementDir -= mFirstPersonCamera.getTarget();
+    }
 
-    // if (inputs[SDL_SCANCODE_A])
-    // {
-    //     inputs.at(SDL_SCANCODE_A) = false;
-    //     mMovementDir -= mFirstPersonCamera.getRight();
-    // }
+    if (inputs.at(GLFW_KEY_A))
+    {
+        mMovementDir -= mFirstPersonCamera.getRight();
+    }
 
-    // if (inputs[SDL_SCANCODE_D])
-    // {
-    //     inputs.at(SDL_SCANCODE_D) = false;
-    //     mMovementDir += mFirstPersonCamera.getRight();
-    // }
+    if (inputs.at(GLFW_KEY_D))
+    {
+        mMovementDir += mFirstPersonCamera.getRight();
+    }
 
     // mouse wheel events
     if (mouseWheelDelta != 0)
@@ -111,6 +113,7 @@ void Player::input(const GlfwHandler& glfwHandler, const float mouseWheelDelta,
         {
             mFirstPersonCamera.rotate(xOffset * scMouseSensitivity, yOffset * scMouseSensitivity, false, false);
             // SDL_WarpMouseInWindow(glfwHandler.getSdlWindow(), winCenter.x, winCenter.y);
+            glfwSetCursorPos(glfwHandler.getGlfwWindow(), winCenter.x, winCenter.y);
         }
     }
 }
