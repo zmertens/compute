@@ -190,7 +190,7 @@ float rand(vec2 co)
 	return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 47236.4343);
 }
 
-// the mother fucking bread and butter of the fucking raytracer application
+// the bread and butter of the raytracer, compute a pixel color for this ray
 vec3 traceRay(inout Ray theRay)
 {
 	vec3 finalColor = vec3(0.0f);
