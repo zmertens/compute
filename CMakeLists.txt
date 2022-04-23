@@ -4,7 +4,7 @@ cmake_policy(SET CMP0054 NEW)
 # ENABLE CMP0074: USE *_ROOT PATH variables
 cmake_policy(SET CMP0074 NEW)
 
-project("COMPUTE" LANGUAGES C CXX)
+project("compute" LANGUAGES C CXX)
 
 # Require C++ standard
 set(CMAKE_CXX_STANDARD 14)
@@ -63,6 +63,7 @@ set(GLSL_RAYTRACE_SOURCES
 	GlRayTracer/GlUtils.cpp
 	GlRayTracer/Light.cpp
 	GlRayTracer/Main.cpp
+	GlRayTracer/Compute.cpp
 	GlRayTracer/Material.cpp
 	GlRayTracer/Player.cpp
 	GlRayTracer/GlfwHandler.cpp
