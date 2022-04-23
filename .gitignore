@@ -34,3 +34,5 @@
 build/
 .vscode/
 !extlibs/.gitkeep
+extlibs/glfw-3.3-stable
+extlibs/glm-0.9.7
