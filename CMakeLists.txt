@@ -22,8 +22,8 @@ find_package(OpenGL REQUIRED)
 
 find_package(Threads)
 
-find_package(GLM REQUIRED)
-message(STATUS "GLM included at ${GLM_INCLUDE_DIRS}")
+set(GLM_DIR ${LIB_DIR}/glm-0.9.7)
+message(STATUS "GLM included at ${GLM_DIR}")
 add_definitions(-DGLM_FORCE_RADIANS)
 
 set(GLFW_DIR ${LIB_DIR}/glfw-3.3-stable)
@@ -75,7 +75,7 @@ add_executable(${PROJECT_NAME} ${GLSL_RAYTRACE_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} ${CMAKE_DL_LIBS} OpenGL::GL glfw ${GLFW_LIBRARIES} ${GLSL_RAYTRACER_LIBS})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_DIR}/include ${GLM_INCLUDE_DIR}})
+target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_DIR}/include ${GLM_DIR}})
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
