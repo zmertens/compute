@@ -4,7 +4,7 @@
 #include <sstream>
 #include <random>
 
-#include "./extlibs/glm/glm.hpp"
+#include <glm/glm.hpp>
 
 namespace Utils
 {

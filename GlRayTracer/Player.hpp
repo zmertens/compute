@@ -4,7 +4,7 @@
 #include <vector>
 #include <cstdint>
 
-#include "./extlibs/glm/glm.hpp"
+#include <glm/glm.hpp>
 
 class GlfwHandler;
 class Camera;

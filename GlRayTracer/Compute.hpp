@@ -10,11 +10,10 @@
 #include <sstream>
 #include <cstdint>
 
-#include "extlibs/glm/gtc/constants.hpp"
-// #include <glm/gtc/constants.hpp>
-#include "extlibs/glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/constants.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
-#include "extlibs/glm/gtx/transform.hpp"
+#include <glm/gtx/transform.hpp>
 
 #include "Shader.hpp"
 #include "Camera.hpp"
@@ -33,7 +32,7 @@ class Compute
 private:
     Camera mCamera;
     Player mPlayer;
-    static constexpr glm::vec3 CLEAR_COLOR = glm::vec3(0.f);
+    static const glm::vec3 CLEAR_COLOR;
     static std::unordered_map<std::uint8_t, bool> mKepMap;
 
     void initCompute(Shader& compute, GLuint shapeSSBO,

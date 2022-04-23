@@ -1,7 +1,7 @@
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
 
-#include "./extlibs/glm/glm.hpp"
+#include <glm/glm.hpp>
 
 // the layout of the data here is pretty important!
 class Sphere

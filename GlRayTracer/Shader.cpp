@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "./extlibs/glm/gtc/type_ptr.hpp"
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Utils.hpp"
 

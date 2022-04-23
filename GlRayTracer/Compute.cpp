@@ -1,9 +1,13 @@
 #include "Compute.hpp"
 
+#include <glad/glad.h>
+
 #define TOTAL_SPHERES 20
 #define TOTAL_LIGHTS 5
 
+const glm::vec3 Compute::CLEAR_COLOR = glm::vec3(0.f);
 std::unordered_map<std::uint8_t, bool> Compute::mKepMap;
+
 
 Compute::Compute()
 : mCamera()

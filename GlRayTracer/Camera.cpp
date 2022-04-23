@@ -1,8 +1,8 @@
 #include "Camera.hpp"
 
 #define GLM_ENABLE_EXPERIMENTAL
-#include "extlibs/glm/gtx/transform.hpp"
-#include "extlibs/glm/gtc/matrix_transform.hpp"
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 const float Camera::scMaxYawValue = 119.0f;
 const float Camera::scMaxPitchValue = 89.0f;

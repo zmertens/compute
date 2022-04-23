@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "./extlibs/glm/glm.hpp"
+#include <glm/glm.hpp>
 
 class Material
 {

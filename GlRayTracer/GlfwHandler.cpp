@@ -102,23 +102,17 @@ bool GlfwHandler::init()
     unsigned char pixels[32 * 32 * 4];
     memset(pixels, 0xff, sizeof(pixels));
     
-    GLFWimage image;
-    image.width = 32;
-    image.height = 32;
-    image.pixels = pixels;
-    
-    mGlfwCursor = glfwCreateCursor(&image, 0, 0);
-    // mGlfwCursor = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
+    mGlfwCursor = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
     if (mGlfwCursor == nullptr)
     {
         fprintf(stderr, "Cursor creation failed");
     }
-    glfwSetInputMode(mGlfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    // glfwSetInputMode(mGlfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     glfwSetCursor(mGlfwWindow, mGlfwCursor);
 
-    if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
+    // Initialize Glad to use OpenGL after GLFW context creation
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
     {
-        std::cerr << "Could not load OpenGL functions\n" << std::endl;
         glfwTerminate();
         return !success;
     }

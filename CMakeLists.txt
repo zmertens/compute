@@ -15,7 +15,7 @@ set(CMAKE_BUILD_TYPE_INIT "RelWithDebInfo")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
-set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/GlRayTracer/extlibs)
+set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extlibs)
 
 # find the required packages
 find_package(OpenGL REQUIRED)
@@ -32,6 +32,13 @@ set(GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only")
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES ON CACHE BOOL "" FORCE)
 add_subdirectory(${GLFW_DIR})
+
+set(GLAD_DIR ${LIB_DIR}/glad)
+message(STATUS "glad included at ${GLAD_DIR}")
+add_library(glad ${GLAD_DIR}/src/glad.c)
+target_include_directories(glad PRIVATE ${GLAD_DIR}/include)
+
+set(STB_IMAGE ${LIB_DIR}/stb)
 
 set(GLSL_RAYTRACER_LIBS "")
 
@@ -58,7 +65,9 @@ if(APPLE)
 endif(APPLE)
 
 set(GLSL_RAYTRACE_SOURCES
-	GlRayTracer/extlibs/gl_core_4_5.c
+	${LIB_DIR}/glad/src/glad.c
+	GlRayTracer/GlfwHandler.cpp
+	GlRayTracer/Shader.cpp
 	GlRayTracer/Camera.cpp
 	GlRayTracer/GlUtils.cpp
 	GlRayTracer/Light.cpp
@@ -66,16 +75,14 @@ set(GLSL_RAYTRACE_SOURCES
 	GlRayTracer/Compute.cpp
 	GlRayTracer/Material.cpp
 	GlRayTracer/Player.cpp
-	GlRayTracer/GlfwHandler.cpp
-	GlRayTracer/Shader.cpp
 	GlRayTracer/Transform.cpp
 )
 
 add_executable(${PROJECT_NAME} ${GLSL_RAYTRACE_SOURCES})
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_DL_LIBS} OpenGL::GL glfw ${GLFW_LIBRARIES} ${GLSL_RAYTRACER_LIBS})
+target_link_libraries(${PROJECT_NAME} OpenGL::GL glfw ${GLFW_LIBRARIES} ${GLSL_RAYTRACER_LIBS} ${CMAKE_DL_LIBS} )
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_DIR}/include ${GLM_DIR}})
+target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_DIR}/include ${GLM_DIR} ${GLAD_DIR}/include ${STB_IMAGE})
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
