@@ -10,7 +10,7 @@ std::unordered_map<std::uint8_t, bool> Compute::mKepMap;
 
 
 Compute::Compute()
-: mCamera()
+: mCamera(glm::vec3(-100.f, 25.f, -100.f))
 , mPlayer(mCamera)
 {
 
@@ -90,16 +90,16 @@ void Compute::run()
         lastTime = currentTime;
         accumulator += deltaTime;
 
-        while (accumulator > timePerFrame)
-        {
+        // while (accumulator > timePerFrame)
+        // {
             accumulator -= timePerFrame;
             input(glfwHandler, mouseWheelDelta, running);
             update(deltaTime, timePerFrame);
-        }
+        // }
 
         float ar = static_cast<float>(GlfwHandler::GLFW_WINDOW_X) / static_cast<float>(GlfwHandler::GLFW_WINDOW_Y);
 
-        render(computeShader, tracerShader, ar, vao, screenTex);
+        render(computeShader, tracerShader, spheres, ar, vao, screenTex);
 
         glfwHandler.swapBuffers();
         // glfwPollEvents();
@@ -151,9 +151,13 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
     float imgCircleRadius = 125.0f;
     float offset = 15.25f;
 
-    std::ofstream out;
-    out.open("./sphere_data.txt");
-    out << "Origin sphere:\n";
+#if defined(DEBUG_COMPUTE)
+    GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shapeSSBO);
+    GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, spheres.size() * sizeof(Sphere), spheres.data(), GL_STATIC_COPY);
+    GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
+#endif // defined
 
     // spheres
     for (unsigned int index = 0; index != TOTAL_SPHERES; ++index)
@@ -184,14 +188,14 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
         float radius = Utils::getRandomFloat(5.0f, 12.0f);
         spheres.emplace_back(center, radius, ambient, diffuse, specular, shiny, refl);
 
-//        compute.setUniform("uSpheres[" + Utils::toString(index) + "].material.ambient", material.getAmbient());
-//        compute.setUniform("uSpheres[" + Utils::toString(index) + "].material.diffuse", material.getDiffuse());
-//        compute.setUniform("uSpheres[" + Utils::toString(index) + "].material.specular", material.getSpecular());
-//        compute.setUniform("uSpheres[" + Utils::toString(index) + "].material.shininess", material.getShininess());
-//        compute.setUniform("uSpheres[" + Utils::toString(index) + "].material.reflective", material.getReflectivity());
-//        compute.setUniform("uSpheres[" + Utils::toString(index) + "].center", center);
-//        compute.setUniform("uSpheres[" + Utils::toString(index) + "].radius", radius);
-//        compute.setUniform("uSpheres[" + Utils::toString(index) + "].radius2", radius * radius);
+        compute.setUniform("uSpheres[" + Utils::toString(index) + "].material.ambient", material.getAmbient());
+        compute.setUniform("uSpheres[" + Utils::toString(index) + "].material.diffuse", material.getDiffuse());
+        compute.setUniform("uSpheres[" + Utils::toString(index) + "].material.specular", material.getSpecular());
+        compute.setUniform("uSpheres[" + Utils::toString(index) + "].material.shininess", material.getShininess());
+        compute.setUniform("uSpheres[" + Utils::toString(index) + "].material.reflective", material.getReflectivity());
+        compute.setUniform("uSpheres[" + Utils::toString(index) + "].center", center);
+        compute.setUniform("uSpheres[" + Utils::toString(index) + "].radius", radius);
+        compute.setUniform("uSpheres[" + Utils::toString(index) + "].radius2", radius * radius);
     }
 
 #if defined(DEBUG_COMPUTE)
@@ -200,18 +204,18 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
     GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
     glBufferData(GL_SHADER_STORAGE_BUFFER, spheres.size() * sizeof(Sphere), spheres.data(), GL_STATIC_COPY);
     GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
-#endif // defined
-
+    std::ofstream out;
+    out.open("./sphere_data.txt");
+    out << "Origin sphere:\n";
     out << "\nMapped Sphere data:\n";
-
     Sphere* ptr = (Sphere*) glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, spheres.size() * sizeof(Sphere), GL_MAP_READ_BIT);
     for (unsigned int i = 0; i != spheres.size(); ++i)
     {
-        //SDL_Log("Sphere[%i].center(%f, %f, %f)\n", i, ptr[i].center.x, ptr[i].center.y, ptr[i].center.z);
         out << "Sphere[" << i << "], center(" << ptr[i].center.x << ", " << ptr[i].center.y << ", " << ptr[i].center.z << ")\n";
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
     out.close();
+#endif // defined
 
     // plane
     glm::vec3 ambient (1.0f, 0.0f, 0.0f);
@@ -251,7 +255,7 @@ void Compute::update(const float dt, const double timeSinceInit)
 /**
  * @type GL_TRIANGLE_STRIP
  */
-void Compute::render(Shader& compute, Shader& raytracer, float ar,
+void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Sphere>& spheres, float ar,
     GLuint vao, GLuint tex, GLenum type)
 {
  glClearColor(CLEAR_COLOR.x, CLEAR_COLOR.y, CLEAR_COLOR.z, 1.0);
@@ -269,16 +273,17 @@ void Compute::render(Shader& compute, Shader& raytracer, float ar,
     compute.setUniform("uCamera.ray10", mCamera.getFrustumEyeRay(ar, 1.0f, -1.0f));
     compute.setUniform("uCamera.ray11", mCamera.getFrustumEyeRay(ar, 1.0f, 1.0f));
 
-//    static double elapsed = static_cast<double>(SDL_GetTicks()) / 1000.0;
-//    for (unsigned int index = 0; index != TOTAL_SPHERES; ++index)
-//    {
-//         glm::mat4 transform;
-//         if (index % 2 == 0)
-//             transform = glm::translate(glm::vec3(glm::cos(elapsed) * 10.0f, glm::sin(elapsed) * 10.0f, 0));
-//         else
-//             transform = glm::translate(glm::vec3(0, glm::cos(elapsed) * 20.0f, glm::sin(elapsed) * 20.0f));
-//         compute.setUniform("uSpheres[" + Utils::toString(index) + "].center",  glm::vec3(transform * glm::vec4(spheres.at(index).center, 1.0)));
-//     }
+   static double elapsed = static_cast<double>(glfwGetTime()) / 1000.0;
+   for (unsigned int index = 0; index != TOTAL_SPHERES; ++index)
+   {
+        glm::mat4 transform;
+        if (index % 2 == 0)
+            transform = glm::translate(glm::vec3(glm::cos(elapsed) * 10.0f, glm::sin(elapsed) * 10.0f, 0));
+        else
+            transform = glm::translate(glm::vec3(0, glm::cos(elapsed) * 20.0f, glm::sin(elapsed) * 20.0f));
+        compute.setUniform("uSpheres[" + Utils::toString(index) + "].center", 
+            glm::vec3(transform * glm::vec4(spheres.at(index).center.x, spheres.at(index).center.y, spheres.at(index).center.z, 1.0)));
+    }
 
     glBindImageTexture(0, tex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
@@ -332,5 +337,5 @@ void Compute::printOpenGlInfo()
     ss << "\nGL Version   : " << major << "." << minor;
     ss << "\nGLSL Version : " << glslVersion;
     ss << "\n-------------------------------------------------------------\n";
-    printf(ss.str().c_str());
+    printf("%s\n", ss.str().c_str());
 }

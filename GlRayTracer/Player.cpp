@@ -127,15 +127,15 @@ void Player::update(const float dt, const double timeSinceInit)
 {
     if (glm::length(mMovementDir) > 0)
     {
-        if (mCollisions)
-        {
-//            glm::vec3 origin (getPosition());
-//            // R(t) = P + Vt
-//            glm::vec3 direction (origin + glm::normalize(mMovementDir * scMovementScalar * dt));
-//            glm::vec3 collision (iterateThruSpace(mLevel.getEmptySpace(), mLevel.getTileScalar(), origin, direction));
-//            mMovementDir *= collision;
-//            mMovementDir.y = 0.0f;
-        }
+        // if (mCollisions)
+        // {
+           glm::vec3 origin (getPosition());
+           // R(t) = P + Vt
+           glm::vec3 direction (origin + glm::normalize(mMovementDir * scMovementScalar * dt));
+        //    glm::vec3 collision (iterateThruSpace(mLevel.getEmptySpace(), mLevel.getTileScalar(), origin, direction));
+        //    mMovementDir *= collision;
+           mMovementDir.y = 0.0f;
+        // }
 
         mFirstPersonCamera.move(mMovementDir, scMovementScalar * dt);
 
