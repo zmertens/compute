@@ -190,11 +190,13 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
 //        compute.setUniform("uSpheres[" + Utils::toString(index) + "].radius2", radius * radius);
     }
 
+#if defined(DEBUG_COMPUTE)
     GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shapeSSBO);
     GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
     glBufferData(GL_SHADER_STORAGE_BUFFER, spheres.size() * sizeof(Sphere), spheres.data(), GL_STATIC_COPY);
     GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
+#endif // defined
 
     out << "\nMapped Sphere data:\n";
 
@@ -252,10 +254,6 @@ void Compute::render(Shader& compute, Shader& raytracer, float ar,
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     compute.bind();
-
-    // GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
-    // glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, mShapeSSBO);
-    // GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
 
     double time = static_cast<double>(glfwGetTime()) / 1000.0;
     compute.setUniform("uTime", time);

@@ -84,7 +84,7 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
 string(TOLOWER "${CMAKE_BUILD_TYPE}" cmake_build_type_tolower)
 if(cmake_build_type_tolower STREQUAL "debug" OR
     cmake_build_type_tolower STREQUAL "relwithdebinfo")
-    target_compile_definitions(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_DEBUG)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG_COMPUTE)
     message("Enabling DEBUG mode")
 endif()
 
