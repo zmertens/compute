@@ -1,0 +1,8 @@
+[submodule "extlibs/glm-0.9.7"]
+	path = extlibs/glm-0.9.7
+	url = https://github.com/g-truc/glm.git
+	branch = 0.9.7
+[submodule "extlibs/glfw-3.3-stable"]
+	path = extlibs/glfw-3.3-stable
+	url = https://github.com/glfw/glfw.git
+	branch = 3.3-stable

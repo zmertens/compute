@@ -1,5 +1,6 @@
 #version 450 core
 
+// These defines should match the Compute.cpp source
 #define MAX_SPHERES 20
 #define MAX_LIGHTS 5
 #define SPHERE_ID 0
@@ -27,7 +28,7 @@ struct Material {
 };
 
 struct Sphere {
-	//Material material;
+	Material material;
 	vec4 center;
 	vec4 ambient;
 	vec4 diffuse;
@@ -63,7 +64,7 @@ struct Ray {
 uniform float uTime = 1.0f;
 uniform Camera uCamera;
 uniform Plane uPlane;
-//uniform Sphere uSpheres[MAX_SPHERES];
+uniform Sphere uSpheres[MAX_SPHERES];
 uniform Light uLights[MAX_LIGHTS];
 
 // this is an SSBO
@@ -190,7 +191,7 @@ float rand(vec2 co)
 	return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 47236.4343);
 }
 
-// the mother fucking bread and butter of the fucking raytracer application
+// the bread and butter of the raytracer, compute a pixel color for this ray
 vec3 traceRay(inout Ray theRay)
 {
 	vec3 finalColor = vec3(0.0f);
@@ -262,23 +263,23 @@ vec3 traceRay(inout Ray theRay)
 
 			Ray lightRay = Ray(intPoint + (intNormal * EPSILON), lightDir);
 
-//			float t0, t1;
-//			for (int j = 0; shadow == 1.0f && j != MAX_SPHERES; ++j)
-//			{
-//				t0 = t1 = length(lightDir);
+			float t0, t1;
+			for (int j = 0; shadow == 1.0f && j != MAX_SPHERES; ++j)
+			{
+				t0 = t1 = length(lightDir);
 
 				endEarly = true;
 				intersectObjectID = -1;
 				objArrayIndex = -1;
 				tClosest = findObjectIntersection(lightRay, intersectObjectID, objArrayIndex, length(lightDir), endEarly);
 
-				//if (sphereIntersect(uSpheres[j], lightRay, t0, t1) && (t0 > EPSILON))
+				if (sphereIntersect(uSpheres[j], lightRay, t0, t1) && (t0 > EPSILON))
 				if (intersectObjectID != -1)
 				{
 					shadow = 0.100f;
 					//break;
 				}
-			//} // end lights
+			} // end lights
 
 			// compute lighting
 			vec3 reflectDir = (reflect(lightRay.direction, intNormal));

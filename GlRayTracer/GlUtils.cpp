@@ -2,6 +2,8 @@
 
 #include <cstdio>
 
+#include <glad/glad.h>
+
 #include "Utils.hpp"
 
 /**

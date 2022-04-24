@@ -5,7 +5,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "./extlibs/glm/glm.hpp"
+#include <glm/glm.hpp>
 
 #include "GlfwHandler.hpp"
 

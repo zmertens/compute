@@ -2,10 +2,9 @@
 #define PLAYER_HPP
 
 #include <vector>
-#include <unordered_map>
 #include <cstdint>
 
-#include "./extlibs/glm/glm.hpp"
+#include <glm/glm.hpp>
 
 class GlfwHandler;
 class Camera;
@@ -19,8 +18,7 @@ public:
     void setPosition(const glm::vec3& position);
     void move(const glm::vec3& vel, float dt);
     void input(const GlfwHandler& glfwHandler, const float mouseWheelDelta,
-        const glm::vec2& coords,
-        std::unordered_map<uint8_t, bool> inputs);
+        const glm::vec2& coords);
     void update(const float dt, const double timeSinceInit);
     void render() const;
     Camera& getCamera() const;

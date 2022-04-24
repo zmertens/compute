@@ -1,7 +1,7 @@
 #ifndef GLFW_HANDLER
 #define GLFW_HANDLER
 
-#include "extlibs/gl_core_4_5.h"
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <string>
