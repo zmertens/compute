@@ -45,7 +45,7 @@ private:
         GLuint vao, GLuint tex, GLenum type = GL_TRIANGLE_STRIP);
 
     void glfwEvents(GlfwHandler& glfwHandler, float& mouseWheelDy, bool& running);
-    void printFramesToConsole(unsigned int& frameCounter, float& timeSinceLastUpdate, const float dt);
+    void printFramesToConsole(unsigned int& frameCounter, const double& timeSinceLastUpdate, const float dt);
     void printOpenGlInfo();
 public:
     Compute();

@@ -78,24 +78,16 @@ void Compute::run()
     {
         glfwPollEvents();
 
-        // Reset input keys to false ever frame
-        auto&& inputs = std::move(glfwHandler.getKeys());
-        for (auto input : inputs) {
-            input = false;
-        }
+        static constexpr double fixedTimeStep = 1.0 / 60.0;
+        static constexpr double maxDeltaTime = 1.0;
+        static double timeSinceLastRender = static_cast<double>(glfwGetTime()) / 1000.0;
+        timeSinceLastRender = std::min(timeSinceLastRender + (static_cast<double>(glfwGetTime()) / 1000.0), maxDeltaTime);
 
-        static double lastTime = static_cast<double>(glfwGetTime()) / 1000.0;
-        double currentTime = static_cast<double>(glfwGetTime()) / 1000.0;
-        float deltaTime = static_cast<float>(currentTime - lastTime);
-        lastTime = currentTime;
-        accumulator += deltaTime;
-
-        // while (accumulator > timePerFrame)
-        // {
-            accumulator -= timePerFrame;
+        while (timeSinceLastRender >= fixedTimeStep) {
+            timeSinceLastRender -= fixedTimeStep;
             input(glfwHandler, mouseWheelDelta, running);
-            update(deltaTime, timePerFrame);
-        // }
+            update(timeSinceLastRender, fixedTimeStep);
+        }
 
         float ar = static_cast<float>(GlfwHandler::GLFW_WINDOW_X) / static_cast<float>(GlfwHandler::GLFW_WINDOW_Y);
 
@@ -103,7 +95,13 @@ void Compute::run()
 
         glfwHandler.swapBuffers();
         // glfwPollEvents();
-        printFramesToConsole(frameCounter, timeSinceLastUpdate, deltaTime);
+        printFramesToConsole(frameCounter, timeSinceLastRender, maxDeltaTime);
+
+        // Reset input keys to false ever frame
+        auto&& inputs = std::move(glfwHandler.getKeys());
+        for (auto input : inputs) {
+            input = false;
+        }
     }
 
     glDeleteVertexArrays(1, &vao);
@@ -304,17 +302,15 @@ void Compute::glfwEvents(GlfwHandler& glfwHandler, float& mouseWheelDy, bool& ru
 }
 
 void Compute::printFramesToConsole(unsigned int& frameCounter,
-    float& timeSinceLastUpdate, const float dt)
+    const double& timeSinceLastUpdate, const float dt)
 {
     frameCounter += 1;
-    timeSinceLastUpdate += dt;
     if (frameCounter >= 60)
     {
         printf("FPS: %u\n", frameCounter);
         printf("time (us) / frame: %f\n", timeSinceLastUpdate / static_cast<float>(frameCounter));
 
         frameCounter = 0;
-        timeSinceLastUpdate -= 1.0f;
     }
 }
 
