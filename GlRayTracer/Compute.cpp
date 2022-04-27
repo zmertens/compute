@@ -256,7 +256,7 @@ void Compute::update(const float dt, const double timeSinceInit)
 void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Sphere>& spheres, float ar,
     GLuint vao, GLuint tex, GLenum type)
 {
- glClearColor(CLEAR_COLOR.x, CLEAR_COLOR.y, CLEAR_COLOR.z, 1.0);
+    glClearColor(CLEAR_COLOR.x, CLEAR_COLOR.y, CLEAR_COLOR.z, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     compute.bind();
@@ -279,6 +279,7 @@ void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Spher
             transform = glm::translate(glm::vec3(glm::cos(elapsed) * 10.0f, glm::sin(elapsed) * 10.0f, 0));
         else
             transform = glm::translate(glm::vec3(0, glm::cos(elapsed) * 20.0f, glm::sin(elapsed) * 20.0f));
+        
         compute.setUniform("uSpheres[" + Utils::toString(index) + "].center", 
             glm::vec3(transform * glm::vec4(spheres.at(index).center.x, spheres.at(index).center.y, spheres.at(index).center.z, 1.0)));
     }
