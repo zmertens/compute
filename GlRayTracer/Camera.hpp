@@ -17,7 +17,7 @@ public:
 
     explicit Camera(const glm::vec3& position = glm::vec3(0),
         const float yaw = -90.0f, const float pitch = 0.0f,
-        float fovy = 65.0f, float near = 0.1f, float far = 100.0f);
+        float fovy = 65.0f, float near = 0.1f, float far = 10000.0f);
 
     void move(const glm::vec3& velocity, float dt);
     void rotate(float yaw, float pitch, bool holdPitch = true, bool holdYaw = true);

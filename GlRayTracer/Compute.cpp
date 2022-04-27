@@ -173,7 +173,7 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
         Material material (ambient, diffuse, specular, Utils::getRandomFloat(10.0f, 300.0f), Utils::getRandomFloat(0.05f, 1.0f), Utils::getRandomFloat(0.05f, 1.0f));
 
         float angle = static_cast<float>(index) / static_cast<float>(TOTAL_SPHERES) * 360.0f;
-        float displacement = Utils::getRandomFloat(-offset, offset);
+        float displacement = Utils::getRandomFloat(offset, offset * 2.f);
 
         float xpos = glm::sin(angle) * imgCircleRadius + displacement;
         displacement = Utils::getRandomFloat(-offset, offset);
@@ -272,17 +272,17 @@ void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Spher
     compute.setUniform("uCamera.ray11", mCamera.getFrustumEyeRay(ar, 1.0f, 1.0f));
 
    static double elapsed = static_cast<double>(glfwGetTime()) / 1000.0;
-   for (unsigned int index = 0; index != TOTAL_SPHERES; ++index)
-   {
-        glm::mat4 transform;
-        if (index % 2 == 0)
-            transform = glm::translate(glm::vec3(glm::cos(elapsed) * 10.0f, glm::sin(elapsed) * 10.0f, 0));
-        else
-            transform = glm::translate(glm::vec3(0, glm::cos(elapsed) * 20.0f, glm::sin(elapsed) * 20.0f));
+//    for (unsigned int index = 0; index != TOTAL_SPHERES; ++index)
+//    {
+//         glm::mat4 transform;
+//         if (index % 2 == 0)
+//             transform = glm::translate(glm::vec3(glm::cos(elapsed) * 10.0f, glm::sin(elapsed) * 10.0f, 0));
+//         else
+//             transform = glm::translate(glm::vec3(0, glm::cos(elapsed) * 20.0f, glm::sin(elapsed) * 20.0f));
         
-        compute.setUniform("uSpheres[" + Utils::toString(index) + "].center", 
-            glm::vec3(transform * glm::vec4(spheres.at(index).center.x, spheres.at(index).center.y, spheres.at(index).center.z, 1.0)));
-    }
+//         compute.setUniform("uSpheres[" + Utils::toString(index) + "].center", 
+//             glm::vec3(transform * glm::vec4(spheres.at(index).center.x, spheres.at(index).center.y, spheres.at(index).center.z, 1.0)));
+//     }
 
     glBindImageTexture(0, tex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
