@@ -16,6 +16,11 @@ Compute::Compute()
 
 }
 
+/**
+ * @brief 
+ * This application code shows fixed time steps
+ * https://github.com/amitkot/ktx-fixed-time-step/blob/master/core/src/com/mygdx/game/fixedstep/forkedApplication.kt
+ */
 void Compute::run()
 {
     GlfwHandler glfwHandler;
@@ -68,10 +73,7 @@ void Compute::run()
 
     initCompute(computeShader, shapeSSBO, spheres, plane, lights);
 
-    const float timePerFrame = 1.0f / 60.0f;
-    float accumulator = 0.0f;
     unsigned int frameCounter = 0;
-    float timeSinceLastUpdate = 0.0f;
     float mouseWheelDelta = 0.0f;
     bool running = true;
     while (!glfwWindowShouldClose(glfwHandler.getGlfwWindow()))
@@ -80,8 +82,8 @@ void Compute::run()
 
         static constexpr double fixedTimeStep = 1.0 / 60.0;
         static constexpr double maxDeltaTime = 1.0;
-        static double timeSinceLastRender = static_cast<double>(glfwGetTime()) / 1000.0;
-        timeSinceLastRender = std::min(timeSinceLastRender + (static_cast<double>(glfwGetTime()) / 1000.0), maxDeltaTime);
+        static double timeSinceLastRender = glfwGetTime() / 1000.0;
+        timeSinceLastRender = std::min(timeSinceLastRender + (glfwGetTime() / 1000.0), maxDeltaTime);
 
         while (timeSinceLastRender >= fixedTimeStep) {
             timeSinceLastRender -= fixedTimeStep;
@@ -94,7 +96,6 @@ void Compute::run()
         render(computeShader, tracerShader, spheres, ar, vao, screenTex);
 
         glfwHandler.swapBuffers();
-        // glfwPollEvents();
         printFramesToConsole(frameCounter, timeSinceLastRender, maxDeltaTime);
 
         // Reset input keys to false ever frame
@@ -109,8 +110,6 @@ void Compute::run()
     glDeleteTextures(1, &screenTex);
 
     glfwHandler.cleanUp();
-
-
 }
 
 void Compute::initCompute(Shader& compute, GLuint shapeSSBO,

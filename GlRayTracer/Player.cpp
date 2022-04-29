@@ -318,6 +318,7 @@ bool Player::isOnExitPoint(const glm::vec3& origin) const
 //    });
 
 //    return (exited != exitPoints.end());
+    return false;
 }
 
 /**

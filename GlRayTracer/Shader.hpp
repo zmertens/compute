@@ -1,3 +1,11 @@
+/**
+ * @file Shader.hpp
+ * @author zmertens
+ * @brief This Shader class requires OpenGL 4.3 or higher
+ * @version 0.1
+ *
+ */
+
 #ifndef SHADER_HPP
 #define SHADER_HPP
 

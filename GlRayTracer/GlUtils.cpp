@@ -42,7 +42,7 @@ bool GlUtils::CheckForOpenGLError(const std::string& file, int line)
         }
 
         std::string fileError = "glError in file " + file + " @ line " + Utils::toString(line) + ", error message: " +  message;
-        printf(fileError.c_str());
+        printf("%s\n", fileError.c_str());
         glErr = glGetError();
         error = !error;
     }
@@ -144,5 +144,5 @@ void GlUtils::GlDebugCallback(GLenum source, GLenum type, GLuint id,
         + Utils::toString(id) + ")" + ": " + msg;
 
     if (severity != GL_DEBUG_SEVERITY_LOW)
-        printf(outStr.c_str());
+        printf("%s\n", outStr.c_str());
 } // debugCallback()
