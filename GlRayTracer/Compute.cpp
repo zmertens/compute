@@ -98,11 +98,7 @@ void Compute::run()
         glfwHandler.swapBuffers();
         printFramesToConsole(frameCounter, timeSinceLastRender, maxDeltaTime);
 
-        // Reset input keys to false ever frame
-        auto&& inputs = std::move(glfwHandler.getKeys());
-        for (auto input : inputs) {
-            input = false;
-        }
+        glfwHandler.resetKeys();
     }
 
     glDeleteVertexArrays(1, &vao);
