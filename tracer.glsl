@@ -1,4 +1,7 @@
-#version 450 core
+// https://github.com/LWJGL/lwjgl3-wiki/wiki/2.6.1.-Ray-tracing-with-OpenGL-Compute-Shaders-%28Part-I%29
+
+#[compute]
+#version 450
 
 // These defines should match the Compute.cpp source
 #define MAX_SPHERES 20
@@ -10,7 +13,7 @@
 #define MAX_RAY_BOUNCES 5
 #define BACKGROUND_COLOR vec3(0.25, 0.05, 0.45)
 
-layout (binding = 0, rgba32f) uniform image2D uFramebuffer;
+layout (binding = 0, rgba32f) uniform restrict writeonly image2D uFramebuffer;
 
 struct Light {
 	vec4 position;
@@ -45,7 +48,6 @@ struct Plane {
 	vec3 normal;
 };
 
-// https://github.com/LWJGL/lwjgl3-wiki/wiki/2.6.1.-Ray-tracing-with-OpenGL-Compute-Shaders-%28Part-I%29
 struct Camera {
 	vec3 eye;
 	float far;
@@ -60,16 +62,24 @@ struct Ray {
 	vec3 direction;
 };
 
-// the uniforms
-uniform float uTime = 1.0f;
-uniform Camera uCamera;
-uniform Plane uPlane;
-uniform Sphere uSpheres[MAX_SPHERES];
-uniform Light uLights[MAX_LIGHTS];
-
 // this is an SSBO
 layout (std430, binding = 1) buffer SphereBuffer {
-	Sphere bSpheres[MAX_SPHERES];
+	Sphere bSpheres[];
+};
+
+// the uniforms
+//uniform float uTime = 1.0f;
+//uniform Camera uCamera;
+//uniform Plane uPlane;
+//uniform Sphere uSpheres[MAX_SPHERES];
+//uniform Light uLights[MAX_LIGHTS];
+
+layout (binding = 2) uniform objects {
+    float uTime;
+    Camera uCamera;
+    Plane uPlane;
+    Sphere uSpheres[MAX_SPHERES];
+    Light uLights[MAX_LIGHTS];
 };
 
 bool sphereIntersect(in Sphere sphere, in Ray theRay, inout float t0, inout float t1)
@@ -273,12 +283,12 @@ vec3 traceRay(inout Ray theRay)
 				objArrayIndex = -1;
 				tClosest = findObjectIntersection(lightRay, intersectObjectID, objArrayIndex, length(lightDir), endEarly);
 
-				if (sphereIntersect(uSpheres[j], lightRay, t0, t1) && (t0 > EPSILON))
-				if (intersectObjectID != -1)
-				{
-					shadow = 0.100f;
-					//break;
-				}
+				if (sphereIntersect(uSpheres[j], lightRay, t0, t1) && (t0 > EPSILON)) {
+                    if (intersectObjectID != -1) {
+                        shadow = 0.100f;
+                        //break;
+                    }
+                }
 			} // end lights
 
 			// compute lighting

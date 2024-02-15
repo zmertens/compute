@@ -31,10 +31,9 @@
 *.out
 *.app
 
+# Godot stuff
 build/
 .vscode/
-!extlibs/.gitkeep
-!extlibs/glad
-!extlibs/stb
-extlibs/glfw-3.3-stable
-extlibs/glm-0.9.7
+.godot/
+*.import
+*.old*
