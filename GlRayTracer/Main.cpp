@@ -4,12 +4,15 @@
 
 #include <cstdlib>
 #include <stdexcept>
+#include <iostream>
 
 #include "Compute.hpp"
 
+#define VERSION_COMPUTE "1.0.1"
+
 int main()
 {
-    std::cout << "Hello Compute" << std::endl;
+    std::cout << "Hello Compute! Version: " << VERSION_COMPUTE << std::endl;
     
     try {
         Compute compute;
