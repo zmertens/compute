@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "GlfwHandler.hpp"
+#include "SDLHelper.hpp"
 #include "Camera.hpp"
 
 const float Player::scMouseSensitivity = 1.0f;
@@ -64,12 +64,12 @@ void Player::move(const glm::vec3& vel, float dt)
  * @param coords
  * @param inputs
  */
-void Player::input(const GlfwHandler& glfwHandler, const float mouseWheelDelta,
+void Player::input(const SDLHelper& glfwHandler, const float mouseWheelDelta,
     const glm::vec2& coords)
 {
     glm::vec2 winCenter = glm::vec2(
-        static_cast<float>(GlfwHandler::GLFW_WINDOW_X) * 0.5f,
-        static_cast<float>(GlfwHandler::GLFW_WINDOW_Y) * 0.5f);
+        static_cast<float>(SDLHelper::GLFW_WINDOW_X) * 0.5f,
+        static_cast<float>(SDLHelper::GLFW_WINDOW_Y) * 0.5f);
 
     auto inputs = glfwHandler.getKeys();
 

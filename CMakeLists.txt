@@ -1,99 +1,78 @@
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
-# ENABLE CMP0054: Only interpret if() arguments as variables or keywords when unquoted
-cmake_policy(SET CMP0054 NEW)
-# ENABLE CMP0074: USE *_ROOT PATH variables
-cmake_policy(SET CMP0074 NEW)
+cmake_minimum_required(VERSION 3.4..4.15)
 
 project("compute" LANGUAGES C CXX)
 
 # Require C++ standard
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_BUILD_TYPE_INIT "RelWithDebInfo")
+set(COMPUTE_APP_NAME compute)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
-
-set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/extlibs)
+set(EXTLIBS_DIR ${CMAKE_SOURCE_DIR}/extlibs)
 
 # find the required packages
 find_package(OpenGL REQUIRED)
 
-find_package(Threads)
+set(STB_IMAGE_DIR ${EXTLIBS_DIR}/stb)
+message(STATUS "stb included at ${STB_IMAGE_DIR}")
 
-set(GLM_DIR ${LIB_DIR}/glm-0.9.7)
+set(GLM_DIR ${EXTLIBS_DIR}/glm-0.9.7)
 message(STATUS "GLM included at ${GLM_DIR}")
-add_definitions(-DGLM_FORCE_RADIANS)
 
-set(GLFW_DIR ${LIB_DIR}/glfw-3.3-stable)
-set(GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only")
-set(GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only")
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES ON CACHE BOOL "" FORCE)
-add_subdirectory(${GLFW_DIR})
-
-set(GLAD_DIR ${LIB_DIR}/glad)
+set(GLAD_DIR ${EXTLIBS_DIR}/glad)
 message(STATUS "glad included at ${GLAD_DIR}")
 add_library(glad ${GLAD_DIR}/src/glad.c)
 target_include_directories(glad PRIVATE ${GLAD_DIR}/include)
 
-set(STB_IMAGE ${LIB_DIR}/stb)
+find_package(SDL3 QUIET)
+if (NOT SDL3_FOUND)
+    message(STATUS "Getting SDL via FetchContent")
+    set(SDL_SHARED TRUE CACHE BOOL "Build a SDL shared library (if available)")
+    set(SDL_STATIC FALSE CACHE BOOL "Build a SDL static library (if available)")
+    include(FetchContent)
+    FetchContent_Declare(SDL
+            GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+            GIT_TAG release-3.2.10)
+    set_property(DIRECTORY "${CMAKE_BINARY_DIR}/_deps/sdl-src" PROPERTY EXCLUDE_FROM_ALL TRUE)
+    FetchContent_MakeAvailable(SDL)
+endif ()
 
-set(GLSL_RAYTRACER_LIBS "")
+# Copy shared/dlls on Windows only
+if (WIN32)
+    add_custom_command(
+            TARGET ${COMPUTE_APP_NAME} POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy $<TARGET_FILE:SDL3::SDL3-shared> $<TARGET_FILE_DIR:${COMPUTE_APP_NAME}>
+            VERBATIM
+    )
+endif ()
 
-if(WIN32)
+set(GL_RAYTRACER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/GLRaytracer)
 
-endif(WIN32)
-if(UNIX)
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
-	# set the native CMake packages
-	find_package(OpenGL REQUIRED)
-	list(APPEND GLSL_RAYTRACER_LIBS ${OPENGL_gl_LIBRARY})
-
-	find_package(Threads REQUIRED)
-	list(APPEND GLSL_RAYTRACER_LIBS ${CMAKE_THREAD_LIBS_INIT})
-
-	find_package(X11 REQUIRED)
-	list(APPEND GLSL_RAYTRACER_LIBS ${X11_LIBRARIES})
-
-	find_library(RT_LIB rt)
-	list(APPEND GLSL_RAYTRACER_LIBS ${RT_LIB})
-endif(UNIX)
-if(APPLE)
-	list(APPEND GLSL_RAYTRACER_LIBS ${APPLE_LIBS})
-endif(APPLE)
-
-set(GLSL_RAYTRACE_SOURCES
-	${LIB_DIR}/glad/src/glad.c
-	GlRayTracer/GlfwHandler.cpp
-	GlRayTracer/Shader.cpp
-	GlRayTracer/Camera.cpp
-	GlRayTracer/GlUtils.cpp
-	GlRayTracer/Light.cpp
-	GlRayTracer/Main.cpp
-	GlRayTracer/Compute.cpp
-	GlRayTracer/Material.cpp
-	GlRayTracer/Player.cpp
-	GlRayTracer/Transform.cpp
+set(GL_RAYTRACER_SOURCE_FILES
+    ${GL_RAYTRACER_DIR}/Camera.cpp
+    ${GL_RAYTRACER_DIR}/Compute.cpp
+    ${GL_RAYTRACER_DIR}/GLUtils.cpp
+    ${GL_RAYTRACER_DIR}/Light.cpp
+    ${GL_RAYTRACER_DIR}/Main.cpp
+    ${GL_RAYTRACER_DIR}/Material.cpp
+    ${GL_RAYTRACER_DIR}/Player.cpp
+    ${GL_RAYTRACER_DIR}/SDLHelper.cpp
+    ${GL_RAYTRACER_DIR}/Shader.cpp
+    ${GL_RAYTRACER_DIR}/Transform.cpp
 )
 
-add_executable(${PROJECT_NAME} ${GLSL_RAYTRACE_SOURCES})
+add_executable(${COMPUTE_APP_NAME} ${GL_RAYTRACER_SOURCE_FILES})
 
-target_link_libraries(${PROJECT_NAME} OpenGL::GL glfw ${GLFW_LIBRARIES} ${GLSL_RAYTRACER_LIBS} ${CMAKE_DL_LIBS} )
+set(DEBUG_COMPUTE "DEBUG_COMPUTE")
+target_compile_definitions(${COMPUTE_APP_NAME} PRIVATE "$<$<OR:$<STREQUAL:$<CONFIG>,Debug>,$<STREQUAL:$<CONFIG>,RelWithDebInfo>>:${DEBUG_COMPUTE}>")
+target_compile_definitions(${COMPUTE_APP_NAME} PRIVATE GLM_FORCE_RADIANS)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_DIR}/include ${GLM_DIR} ${GLAD_DIR}/include ${STB_IMAGE})
-target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
+target_compile_features(${COMPUTE_APP_NAME} PRIVATE cxx_std_20)
 
-target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
+target_link_libraries(${COMPUTE_APP_NAME} OpenGL::GL SDL3::SDL3 glad)
 
-# Check if we need DEBUG compiler definition
-string(TOLOWER "${CMAKE_BUILD_TYPE}" cmake_build_type_tolower)
-if(cmake_build_type_tolower STREQUAL "debug" OR
-    cmake_build_type_tolower STREQUAL "relwithdebinfo")
-    target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG_COMPUTE)
-    message("Enabling DEBUG mode")
-endif()
+target_include_directories(${COMPUTE_APP_NAME} PRIVATE ${GLM_DIR} ${GLAD_DIR}/include ${STB_IMAGE_DIR} ${GL_RAYTRACER_DIR})
 
 # copy resources / shader files
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_SOURCE_DIR}/shaders DESTINATION ${CMAKE_BINARY_DIR})

@@ -18,9 +18,9 @@
 #include "Shader.hpp"
 #include "Camera.hpp"
 #include "Player.hpp"
-#include "GlfwHandler.hpp"
+#include "SDLHelper.hpp"
 #include "Utils.hpp"
-#include "GlUtils.hpp"
+#include "GLUtils.hpp"
 #include "Light.hpp"
 #include "Shader.hpp"
 #include "Material.hpp"
@@ -38,13 +38,13 @@ private:
     void initCompute(Shader& compute, GLuint shapeSSBO,
         std::vector<Sphere>& spheres, Plane& plane,
         std::vector<Light>& lights);
-    void input(GlfwHandler& glfwHandler, const float mouseWheelDelta, bool& running);
+    void input(SDLHelper& glfwHandler, const float mouseWheelDelta, bool& running);
     void update(const float dt, const double timeSinceInit);
     void render(Shader& compute, Shader& raytracer,
         const std::vector<Sphere>& spheres, float ar,
         GLuint vao, GLuint tex, GLenum type = GL_TRIANGLE_STRIP);
 
-    void glfwEvents(GlfwHandler& glfwHandler, float& mouseWheelDy, bool& running);
+    void glfwEvents(SDLHelper& glfwHandler, float& mouseWheelDy, bool& running);
     void printFramesToConsole(unsigned int& frameCounter, float& timeSinceLastUpdate, const float dt);
     void printOpenGlInfo();
 public:

@@ -6,7 +6,7 @@
 
 #include <glm/glm.hpp>
 
-class GlfwHandler;
+class SDLHelper;
 class Camera;
 
 class Player final
@@ -17,7 +17,7 @@ public:
     glm::vec3 getPosition() const;
     void setPosition(const glm::vec3& position);
     void move(const glm::vec3& vel, float dt);
-    void input(const GlfwHandler& glfwHandler, const float mouseWheelDelta,
+    void input(const SDLHelper& glfwHandler, const float mouseWheelDelta,
         const glm::vec2& coords);
     void update(const float dt, const double timeSinceInit);
     void render() const;

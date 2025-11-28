@@ -7,7 +7,7 @@
 
 #include <glm/glm.hpp>
 
-#include "GlfwHandler.hpp"
+#include "SDLHelper.hpp"
 
 namespace ShaderTypes
 {

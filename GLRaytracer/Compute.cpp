@@ -18,7 +18,7 @@ Compute::Compute()
 
 void Compute::run()
 {
-    GlfwHandler glfwHandler;
+    SDLHelper glfwHandler;
     bool success = glfwHandler.init();
     if (!success) {
         std::cout << "GLFW Not initialized" << std::endl;
@@ -57,8 +57,8 @@ void Compute::run()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F,
-        static_cast<GLsizei>(GlfwHandler::GLFW_WINDOW_X),
-        static_cast<GLsizei>(GlfwHandler::GLFW_WINDOW_Y));
+        static_cast<GLsizei>(SDLHelper::GLFW_WINDOW_X),
+        static_cast<GLsizei>(SDLHelper::GLFW_WINDOW_Y));
     glBindImageTexture(0, screenTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
     glGenVertexArrays(1, &vao);
@@ -97,7 +97,7 @@ void Compute::run()
             update(deltaTime, timePerFrame);
         // }
 
-        float ar = static_cast<float>(GlfwHandler::GLFW_WINDOW_X) / static_cast<float>(GlfwHandler::GLFW_WINDOW_Y);
+        float ar = static_cast<float>(SDLHelper::GLFW_WINDOW_X) / static_cast<float>(SDLHelper::GLFW_WINDOW_Y);
 
         render(computeShader, tracerShader, spheres, ar, vao, screenTex);
 
@@ -152,11 +152,11 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
     float offset = 15.25f;
 
 #if defined(DEBUG_COMPUTE)
-    GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
+    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shapeSSBO);
-    GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
+    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
     glBufferData(GL_SHADER_STORAGE_BUFFER, spheres.size() * sizeof(Sphere), spheres.data(), GL_STATIC_COPY);
-    GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
+    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
 #endif // defined
 
     // spheres
@@ -199,11 +199,11 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
     }
 
 #if defined(DEBUG_COMPUTE)
-    GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
+    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shapeSSBO);
-    GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
+    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
     glBufferData(GL_SHADER_STORAGE_BUFFER, spheres.size() * sizeof(Sphere), spheres.data(), GL_STATIC_COPY);
-    GlUtils::CheckForOpenGLError(__FILE__, __LINE__);
+    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
     std::ofstream out;
     out.open("./sphere_data.txt");
     out << "Origin sphere:\n";
@@ -235,7 +235,7 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
     compute.setUniform("uPlane.normal", plane.normal);
 } // initCompute
 
-void Compute::input(GlfwHandler& glfwHandler, const float mouseWheelDelta, bool& running)
+void Compute::input(SDLHelper& glfwHandler, const float mouseWheelDelta, bool& running)
 {
     float mouseWheelDy = 0;
 
@@ -298,7 +298,7 @@ void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Spher
     glDrawArrays(type, 0, 4);
 } // render
 
-void Compute::glfwEvents(GlfwHandler& glfwHandler, float& mouseWheelDy, bool& running)
+void Compute::glfwEvents(SDLHelper& glfwHandler, float& mouseWheelDy, bool& running)
 {
 
 }

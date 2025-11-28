@@ -1,13 +1,30 @@
-=== Compute ===
+# Compute
 
-A raytracer algorithm on the OpenGL Compute shader. My goal is to allow interactive and non-interactive modes and do performance testing with a tool like Valgrind or Gperftools; particularly, I am interested in comparing results between GPU and CPU raytracers. These raytracers will be similar in features: Phong shading model, anti-aliasing, reflections, and refractions..
+A simple project demonstrating a basic raytracer algorithm which is parallelized by OpenGL compute shaders.
+
+Performance results may vary depending on your hardware, but generally, using compute shaders can significantly speed up raytracing tasks compared to CPU-based implementations.
+
+## CMake
+
+This project uses CMake as its build system. To build the project, follow these steps:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/zmertens/compute.git
+   cd compute
+   ```
+   
+2. Create a build directory and navigate into it:
+   ```bash
+   mkdir build
+   cd build
+   ```
+   
+3. Run CMake to configure the project:
+   ```bash
+   cmake ..
+   ```
 
 
-@author zmertens
-@license BSD 3-Clause
-
-Must specify Clang 12.0.0 compiler (C++14 support) or higher.
-
-Build and Run: `cd build && cmake -G"Ninja" -DBUILD_SHARED_LIBS=true .. && ninja` and run with the glfw3.dll file next to the executable
-
-References: https://github.com/LWJGL/lwjgl3-wiki/wiki/2.6.1.-Ray-tracing-with-OpenGL-Compute-Shaders, https://learnopengl.com,
+  - https://github.com/LWJGL/lwjgl3-wiki/wiki/2.6.1.-Ray-tracing-with-OpenGL-Compute-Shaders
+  - https://learnopengl.com

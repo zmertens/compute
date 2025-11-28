@@ -1,4 +1,4 @@
-#include "GlUtils.hpp"
+#include "GLUtils.hpp"
 
 #include <cstdio>
 
@@ -12,7 +12,7 @@
  * @param line
  * @return
  */
-bool GlUtils::CheckForOpenGLError(const std::string& file, int line)
+bool GLUtils::CheckForOpenGLError(const std::string& file, int line)
 {
     bool error = false;
     GLenum glErr;
@@ -59,7 +59,7 @@ bool GlUtils::CheckForOpenGLError(const std::string& file, int line)
  * @param msg
  * @param param
  */
-void GlUtils::GlDebugCallback(GLenum source, GLenum type, GLuint id,
+void GLUtils::GlDebugCallback(GLenum source, GLenum type, GLuint id,
     GLenum severity, GLsizei length, const GLchar* msg, const void* param)
 {
     std::string sourceStr;

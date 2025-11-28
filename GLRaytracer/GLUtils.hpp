@@ -3,14 +3,14 @@
 
 #include <string>
 
-#include "GlfwHandler.hpp"
+#include "SDLHelper.hpp"
 
 /**
  * This class is not intended to be initialized.
  * When using `checkForOpenGLError` wrap it around the function call to test.
  * @brief The GLUtils class
  */
-class GlUtils
+class GLUtils
 {
 public:
     static bool CheckForOpenGLError(const std::string& file, int line);
