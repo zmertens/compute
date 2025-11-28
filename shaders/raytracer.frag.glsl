@@ -10,7 +10,11 @@ layout (binding = 0) uniform sampler2D uTexture2D;
 
 void main()
 {
-	FragColor = texture(uTexture2D, vTexCoord);
-}
+	vec3 color = texture(uTexture2D, vTexCoord).rgb;
 
+	// Apply gamma correction for proper display
+	color = pow(color, vec3(1.0 / 2.2));
+
+	FragColor = vec4(color, 1.0);
+}
 

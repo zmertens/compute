@@ -27,8 +27,8 @@ struct Material {
 	float reflective;
 };
 
+// FIXED: Sphere struct now matches C++ Sphere.hpp layout exactly
 struct Sphere {
-	Material material;
 	vec4 center;
 	vec4 ambient;
 	vec4 diffuse;
@@ -67,7 +67,7 @@ uniform Plane uPlane;
 uniform Sphere uSpheres[MAX_SPHERES];
 uniform Light uLights[MAX_LIGHTS];
 
-// this is an SSBO
+// this is an SSBO - CRITICAL: Now uses bSpheres for all sphere data
 layout (std430, binding = 1) buffer SphereBuffer {
 	Sphere bSpheres[MAX_SPHERES];
 };
@@ -143,7 +143,7 @@ vec3 phongShading(Light light, Material material, vec3 viewDir, vec3 lightDir, v
 	ambient = light.ambient * 0.01f;//material.ambient;
 	diffuse = light.diffuse * material.diffuse * max(dot(lightDir, intNormal), 0);
 	specular = light.specular * material.specular * max(pow(dot(viewDir, reflectDir), material.shininess), 0);
-	return (shadow * (diffuse + specular)) + ambient; // ambient color out of range??
+	return (shadow * (diffuse + specular)) + ambient;
 }
 
 float findObjectIntersection(Ray theRay, inout int intersectObjectID, inout int objArrayIndex, float farPlane, bool endEarly)
@@ -170,18 +170,14 @@ float findObjectIntersection(Ray theRay, inout int intersectObjectID, inout int 
 		}
 	}
 
-	// no spheres are beyond the planes
-//	if (intersectObjectID == -1)
-//	{
-		t0 = t1 = tClosest;
-		if (planeIntersect(uPlane, theRay, t0, t1) && (t0 > EPSILON) && (t0 < tClosest))
-		{
-			tClosest = t0;
-			intersectObjectID = PLANE_ID;
-			if (endEarly)
-				return tClosest;
-		}
-//	}
+	t0 = t1 = tClosest;
+	if (planeIntersect(uPlane, theRay, t0, t1) && (t0 > EPSILON) && (t0 < tClosest))
+	{
+		tClosest = t0;
+		intersectObjectID = PLANE_ID;
+		if (endEarly)
+			return tClosest;
+	}
 
 	return tClosest;
 }
@@ -207,13 +203,14 @@ vec3 traceRay(inout Ray theRay)
 
 		if (intersectObjectID == -1)
 		{
+			// No intersection - render gradient background
 			vec2 coords = vec2(gl_GlobalInvocationID.xy);
 			vec2 size = vec2(imageSize(uFramebuffer));
 
 			float r = float(coords.x) / float(size.x);
 			float g = float(coords.y) / float(size.y);
 			float b = fract(uTime);
-			vec3 bg = vec3(r, g, b);//vec3(sin(r * uTime), cos(uTime), r);
+			vec3 bg = vec3(r, g, b);
 			finalColor += bg;
 			break;
 		}
@@ -222,11 +219,11 @@ vec3 traceRay(inout Ray theRay)
 		vec3 intPoint = vec3(theRay.origin + (theRay.direction * tClosest));
 		vec3 intNormal;
 		float reflValue;
-		// do transparency
 
 		Material activeMaterial;
 		if (intersectObjectID == SPHERE_ID)
 		{
+			// Create material from sphere's direct fields (no nested Material struct)
 			activeMaterial = Material(bSpheres[objArrayIndex].ambient.xyz,
 								bSpheres[objArrayIndex].diffuse.xyz,
 								bSpheres[objArrayIndex].specular.xyz,
@@ -239,50 +236,44 @@ vec3 traceRay(inout Ray theRay)
 		{
 			intNormal = uPlane.normal;
 			reflValue = uPlane.material.reflective;
-			activeMaterial = checkerboardPlaneMaterial(intPoint);//uPlane.material;
+			activeMaterial = checkerboardPlaneMaterial(intPoint);
 		}
 
-		// make sure  we didn't intersect from inside the active obj
+		// make sure we didn't intersect from inside the active obj
 		if (dot(theRay.direction, intNormal) > 0.0)
 			intNormal = -1.0 * intNormal;
 
 		vec3 localColor = vec3(0.0);
 
 		// now iterate through the lights and look for shadows
-		// there is no intersection test for the plane since it can't cast a shadow on anything
 		for (int i = 0; i != MAX_LIGHTS; ++i)
 		{
 			float shadow = 1.0f;
 			Light activeLight = uLights[i];
 
 			vec3 lightDir;
-			if (activeLight.position.w == 1.0)
+			// FIXED: w=0 means directional, w=1 means point light
+			if (activeLight.position.w == 0.0)
 				lightDir = normalize(vec3(activeLight.position.xyz));
 			else
 				lightDir = normalize(vec3(activeLight.position.xyz - intPoint));
 
 			Ray lightRay = Ray(intPoint + (intNormal * EPSILON), lightDir);
 
-			float t0, t1;
-			for (int j = 0; shadow == 1.0f && j != MAX_SPHERES; ++j)
+			// Shadow ray testing
+			endEarly = true;
+			intersectObjectID = -1;
+			objArrayIndex = -1;
+			tClosest = findObjectIntersection(lightRay, intersectObjectID, objArrayIndex, length(lightDir), endEarly);
+
+			// FIXED: Removed duplicate sphereIntersect check
+			if (intersectObjectID != -1)
 			{
-				t0 = t1 = length(lightDir);
-
-				endEarly = true;
-				intersectObjectID = -1;
-				objArrayIndex = -1;
-				tClosest = findObjectIntersection(lightRay, intersectObjectID, objArrayIndex, length(lightDir), endEarly);
-
-				if (sphereIntersect(uSpheres[j], lightRay, t0, t1) && (t0 > EPSILON))
-				if (intersectObjectID != -1)
-				{
-					shadow = 0.100f;
-					//break;
-				}
-			} // end lights
+				shadow = 0.100f;
+			}
 
 			// compute lighting
-			vec3 reflectDir = (reflect(lightRay.direction, intNormal));
+			vec3 reflectDir = reflect(lightRay.direction, intNormal);
 
 			localColor += phongShading(activeLight, activeMaterial, theRay.direction, lightRay.direction, intNormal, reflectDir, shadow);
 		} // end lights
@@ -298,7 +289,8 @@ vec3 traceRay(inout Ray theRay)
 			theRay = reflectRay;
 		}
 
-		if (colorFrac < 0.05f)
+		// More aggressive early termination for performance
+		if (colorFrac < 0.01f)
 			break;
 
 	} // end for loop ray bounces
@@ -326,3 +318,4 @@ void main()
 
 	imageStore(uFramebuffer, invocID, vec4(finalColor, 1.0));
 }
+

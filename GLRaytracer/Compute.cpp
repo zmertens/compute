@@ -1,5 +1,7 @@
 #include "Compute.hpp"
 
+#include <SDL3/SDL.h>
+
 #include <glad/glad.h>
 
 #define TOTAL_SPHERES 20
@@ -10,17 +12,17 @@ std::unordered_map<std::uint8_t, bool> Compute::mKepMap;
 
 
 Compute::Compute()
-: mCamera(glm::vec3(-100.f, 25.f, -100.f))
-, mPlayer(mCamera)
+    : mCamera(glm::vec3(-100.f, 25.f, -100.f))
+      , mPlayer(mCamera)
 {
-
 }
 
 void Compute::run()
 {
     SDLHelper sdlHandler;
     bool success = sdlHandler.init();
-    if (!success) {
+    if (!success)
+    {
         std::cout << "SDL Not initialized" << std::endl;
         return;
     }
@@ -58,8 +60,8 @@ void Compute::run()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F,
-        static_cast<GLsizei>(SDLHelper::GLFW_WINDOW_X),
-        static_cast<GLsizei>(SDLHelper::GLFW_WINDOW_Y));
+                   static_cast<GLsizei>(SDLHelper::GLFW_WINDOW_X),
+                   static_cast<GLsizei>(SDLHelper::GLFW_WINDOW_Y));
     glBindImageTexture(0, screenTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
     glGenVertexArrays(1, &vao);
@@ -69,35 +71,46 @@ void Compute::run()
 
     initCompute(computeShader, shapeSSBO, spheres, plane, lights);
 
-    const float timePerFrame = 1.0f / 60.0f;
+    constexpr float timePerFrame = 1.0f / 60.0f;
     float accumulator = 0.0f;
     unsigned int frameCounter = 0;
     float timeSinceLastUpdate = 0.0f;
-    float mouseWheelDelta = 0.0f;
-    bool running = true;
+
     while (!sdlHandler.shouldClose())
     {
         sdlHandler.pollEvents();
 
         static double lastTime = SDLHelper::getTime();
         double currentTime = SDLHelper::getTime();
-        float deltaTime = static_cast<float>(currentTime - lastTime);
+        auto deltaTime = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
         accumulator += deltaTime;
 
-        // while (accumulator > timePerFrame)
-        // {
+        while (accumulator >= timePerFrame)
+        {
             accumulator -= timePerFrame;
-            input(sdlHandler, mouseWheelDelta, running);
-            update(deltaTime, timePerFrame);
-        // }
+
+            input(sdlHandler);
+
+            update(deltaTime);
+        }
 
         float ar = static_cast<float>(SDLHelper::GLFW_WINDOW_X) / static_cast<float>(SDLHelper::GLFW_WINDOW_Y);
 
         render(computeShader, tracerShader, spheres, ar, vao, screenTex);
 
         sdlHandler.swapBuffers();
-        printFramesToConsole(frameCounter, timeSinceLastUpdate, deltaTime);
+
+        frameCounter++;
+        timeSinceLastUpdate += deltaTime;
+
+        // Update FPS display every ~1 second
+        if (timeSinceLastUpdate >= 1.0f)
+        {
+            printFramesToConsole(sdlHandler, frameCounter, timeSinceLastUpdate);
+            frameCounter = 0;
+            timeSinceLastUpdate = 0.f;
+        }
     }
 
     glDeleteVertexArrays(1, &vao);
@@ -105,13 +118,11 @@ void Compute::run()
     glDeleteTextures(1, &screenTex);
 
     sdlHandler.cleanUp();
-
-
 }
 
 void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
-    std::vector<Sphere>& spheres, Plane& plane,
-    std::vector<Light>& lights)
+                          std::vector<Sphere>& spheres, Plane& plane,
+                          std::vector<Light>& lights)
 {
     compute.bind();
 
@@ -126,11 +137,11 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
     // lights
     for (unsigned int index = 0; index != TOTAL_LIGHTS; ++index)
     {
-        glm::vec3 ambient (0.5f);
-        glm::vec3 diffuse (Utils::getRandomFloat(0.09f, 1.0f),
-            Utils::getRandomFloat(0.09f, 1.0f),
-            Utils::getRandomFloat(0.09f, 1.0f));
-        glm::vec3 specular (1.0f);
+        glm::vec3 ambient(0.5f);
+        glm::vec3 diffuse(Utils::getRandomFloat(0.09f, 1.0f),
+                          Utils::getRandomFloat(0.09f, 1.0f),
+                          Utils::getRandomFloat(0.09f, 1.0f));
+        glm::vec3 specular(1.0f);
 
         glm::vec3 position = lightPositions.at(index);
 
@@ -145,28 +156,26 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
     float imgCircleRadius = 125.0f;
     float offset = 15.25f;
 
-#if defined(DEBUG_COMPUTE)
-    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
+    // Bind SSBO for sphere data - MUST be populated for shader to work
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shapeSSBO);
-    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, spheres.size() * sizeof(Sphere), spheres.data(), GL_STATIC_COPY);
-    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
-#endif // defined
+    // Allocate buffer space (will be filled after sphere creation)
+    glBufferData(GL_SHADER_STORAGE_BUFFER, TOTAL_SPHERES * sizeof(Sphere), nullptr, GL_DYNAMIC_DRAW);
 
     // spheres
     for (unsigned int index = 0; index != TOTAL_SPHERES; ++index)
     {
-        glm::vec3 ambient (Utils::getRandomFloat(0.09f, 1.0f),
-            Utils::getRandomFloat(0.09f, 1.0f), Utils::getRandomFloat(0.09f, 1.0f));
-        glm::vec3 diffuse (Utils::getRandomFloat(0.1f, 0.90f),
-            Utils::getRandomFloat(0.09f, 0.9f), Utils::getRandomFloat(0.09f, 0.9f));
-        glm::vec3 specular (Utils::getRandomFloat(0.5f, 1.0f),
-            Utils::getRandomFloat(0.5f, 1.0f), Utils::getRandomFloat(0.5f, 1.0f));
+        glm::vec3 ambient(Utils::getRandomFloat(0.09f, 1.0f),
+                          Utils::getRandomFloat(0.09f, 1.0f), Utils::getRandomFloat(0.09f, 1.0f));
+        glm::vec3 diffuse(Utils::getRandomFloat(0.1f, 0.90f),
+                          Utils::getRandomFloat(0.09f, 0.9f), Utils::getRandomFloat(0.09f, 0.9f));
+        glm::vec3 specular(Utils::getRandomFloat(0.5f, 1.0f),
+                           Utils::getRandomFloat(0.5f, 1.0f), Utils::getRandomFloat(0.5f, 1.0f));
 
         float shiny = Utils::getRandomFloat(10.0f, 300.0f);
         float refl = Utils::getRandomFloat(0.05f, 1.0f);
 
-        Material material (ambient, diffuse, specular, Utils::getRandomFloat(10.0f, 300.0f), Utils::getRandomFloat(0.05f, 1.0f), Utils::getRandomFloat(0.05f, 1.0f));
+        Material material(ambient, diffuse, specular, Utils::getRandomFloat(10.0f, 300.0f),
+                          Utils::getRandomFloat(0.05f, 1.0f), Utils::getRandomFloat(0.05f, 1.0f));
 
         float angle = static_cast<float>(index) / static_cast<float>(TOTAL_SPHERES) * 360.0f;
         float displacement = Utils::getRandomFloat(-offset, offset);
@@ -192,30 +201,32 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
         compute.setUniform("uSpheres[" + Utils::toString(index) + "].radius2", radius * radius);
     }
 
+    // NOW upload the complete spheres vector to SSBO - CRITICAL for rendering!
+    glBufferData(GL_SHADER_STORAGE_BUFFER, spheres.size() * sizeof(Sphere), spheres.data(), GL_STATIC_DRAW);
+
 #if defined(DEBUG_COMPUTE)
-    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shapeSSBO);
-    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, spheres.size() * sizeof(Sphere), spheres.data(), GL_STATIC_COPY);
-    GLUtils::CheckForOpenGLError(__FILE__, __LINE__);
+    // Verify SSBO data was uploaded correctly
     std::ofstream out;
     out.open("./sphere_data.txt");
-    out << "Origin sphere:\n";
-    out << "\nMapped Sphere data:\n";
-    Sphere* ptr = (Sphere*) glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, spheres.size() * sizeof(Sphere), GL_MAP_READ_BIT);
+    out << "Sphere SSBO Data Verification:\n";
+    Sphere* ptr = (Sphere*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, spheres.size() * sizeof(Sphere),
+                                            GL_MAP_READ_BIT);
     for (unsigned int i = 0; i != spheres.size(); ++i)
     {
-        out << "Sphere[" << i << "], center(" << ptr[i].center.x << ", " << ptr[i].center.y << ", " << ptr[i].center.z << ")\n";
+        out << "Sphere[" << i << "], center(" << ptr[i].center.x << ", " << ptr[i].center.y << ", " << ptr[i].center.z
+            << ")"
+            << ", radius=" << ptr[i].radius << "\n";
     }
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
     out.close();
+    std::cout << "Sphere data written to sphere_data.txt for debugging\n";
 #endif // defined
 
     // plane
-    glm::vec3 ambient (1.0f, 0.0f, 0.0f);
-    glm::vec3 diffuse (1.0f, 0.0f, 0.0f);
-    glm::vec3 specular (1.0f);
-    Material planarMaterial (ambient, diffuse, specular, 250.0f, 0.0f, 0.0f);
+    glm::vec3 ambient(1.0f, 0.0f, 0.0f);
+    glm::vec3 diffuse(1.0f, 0.0f, 0.0f);
+    glm::vec3 specular(1.0f);
+    Material planarMaterial(ambient, diffuse, specular, 250.0f, 0.0f, 0.0f);
     plane.material = planarMaterial;
     plane.normal = glm::vec3(0, 1, 0);
     plane.point = glm::vec3(0, -6, 0);
@@ -229,7 +240,7 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
     compute.setUniform("uPlane.normal", plane.normal);
 } // initCompute
 
-void Compute::input(SDLHelper& sdlHandler, const float mouseWheelDelta, bool& running)
+void Compute::input(SDLHelper& sdlHandler)
 {
     float mouseWheelDy = 0;
 
@@ -241,18 +252,18 @@ void Compute::input(SDLHelper& sdlHandler, const float mouseWheelDelta, bool& ru
     mPlayer.input(sdlHandler, mouseWheelDy, coords);
 }
 
-void Compute::update(const float dt, const double timeSinceInit)
+void Compute::update(const float dt)
 {
-    mPlayer.update(dt, timeSinceInit);
+    mPlayer.update(dt, 1.0);
 }
 
 /**
  * @type GL_TRIANGLE_STRIP
  */
 void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Sphere>& spheres, float ar,
-    GLuint vao, GLuint tex, GLenum type)
+                     GLuint vao, GLuint tex, GLenum type)
 {
- glClearColor(CLEAR_COLOR.x, CLEAR_COLOR.y, CLEAR_COLOR.z, 1.0);
+    glClearColor(CLEAR_COLOR.x, CLEAR_COLOR.y, CLEAR_COLOR.z, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     compute.bind();
@@ -267,21 +278,23 @@ void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Spher
     compute.setUniform("uCamera.ray10", mCamera.getFrustumEyeRay(ar, 1.0f, -1.0f));
     compute.setUniform("uCamera.ray11", mCamera.getFrustumEyeRay(ar, 1.0f, 1.0f));
 
-   static double elapsed = SDLHelper::getTime();
-   for (unsigned int index = 0; index != TOTAL_SPHERES; ++index)
-   {
+    // Get current time for sphere animation (removed 'static' to update every frame)
+    double elapsed = SDLHelper::getTime();
+    for (unsigned int index = 0; index != TOTAL_SPHERES; ++index)
+    {
         glm::mat4 transform;
         if (index % 2 == 0)
             transform = glm::translate(glm::vec3(glm::cos(elapsed) * 10.0f, glm::sin(elapsed) * 10.0f, 0));
         else
             transform = glm::translate(glm::vec3(0, glm::cos(elapsed) * 20.0f, glm::sin(elapsed) * 20.0f));
-        compute.setUniform("uSpheres[" + Utils::toString(index) + "].center", 
-            glm::vec3(transform * glm::vec4(spheres.at(index).center.x, spheres.at(index).center.y, spheres.at(index).center.z, 1.0)));
+        compute.setUniform("uSpheres[" + Utils::toString(index) + "].center",
+                           glm::vec3(transform * glm::vec4(spheres.at(index).center.x, spheres.at(index).center.y,
+                                                           spheres.at(index).center.z, 1.0)));
     }
 
     glBindImageTexture(0, tex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 
-    glDispatchCompute(1080 / 20,  720 / 20, 1);
+    glDispatchCompute(1080 / 20, 720 / 20, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
     raytracer.bind();
@@ -297,18 +310,20 @@ void Compute::sdlEvents(SDLHelper& sdlHandler, float& mouseWheelDy, bool& runnin
     // Event handling can be expanded here if needed
 }
 
-void Compute::printFramesToConsole(unsigned int& frameCounter,
-    float& timeSinceLastUpdate, const float dt)
+void Compute::printFramesToConsole(SDLHelper& sdlHandler, unsigned int frameCounter, float timeSinceLastUpdate) const noexcept
 {
-    frameCounter += 1;
-    timeSinceLastUpdate += dt;
-    if (frameCounter >= 60)
+    if (timeSinceLastUpdate > 0.f && frameCounter > 0)
     {
-        printf("FPS: %u\n", frameCounter);
-        printf("time (us) / frame: %f\n", timeSinceLastUpdate / static_cast<float>(frameCounter));
+        unsigned int fps = static_cast<unsigned int>(frameCounter / timeSinceLastUpdate);
+        float msPerFrame = 1000.0f * timeSinceLastUpdate / static_cast<float>(frameCounter);
 
-        frameCounter = 0;
-        timeSinceLastUpdate -= 1.0f;
+        // Update window title with FPS info
+        char titleBuffer[256];
+        snprintf(titleBuffer, sizeof(titleBuffer), "Compute Raytracer - FPS: %u | %.2f ms/frame", fps, msPerFrame);
+        sdlHandler.setWindowTitle(titleBuffer);
+
+        // Also log to console
+        SDL_Log("FPS: %u | time (ms) / frame: %.2f\n", fps, msPerFrame);
     }
 }
 

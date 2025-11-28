@@ -38,14 +38,14 @@ private:
     void initCompute(Shader& compute, GLuint shapeSSBO,
         std::vector<Sphere>& spheres, Plane& plane,
         std::vector<Light>& lights);
-    void input(SDLHelper& sdlHandler, const float mouseWheelDelta, bool& running);
-    void update(const float dt, const double timeSinceInit);
+    void input(SDLHelper& sdlHandler);
+    void update(const float dt);
     void render(Shader& compute, Shader& raytracer,
         const std::vector<Sphere>& spheres, float ar,
         GLuint vao, GLuint tex, GLenum type = GL_TRIANGLE_STRIP);
 
     void sdlEvents(SDLHelper& sdlHandler, float& mouseWheelDy, bool& running);
-    void printFramesToConsole(unsigned int& frameCounter, float& timeSinceLastUpdate, const float dt);
+    void printFramesToConsole(SDLHelper& sdlHandler, unsigned int frameCounter, float timeSinceLastUpdate) const noexcept;
     void printOpenGlInfo();
 public:
     Compute();

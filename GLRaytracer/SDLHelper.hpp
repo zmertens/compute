@@ -62,6 +62,10 @@ public:
     /// @return Time in seconds
     static double getTime();
 
+    /// @brief Set window title
+    /// @param title New window title
+    void setWindowTitle(const char* title);
+
     /// @brief Log OpenGL information
     void log_gl_info() const;
 

@@ -152,6 +152,12 @@ double SDLHelper::getTime() {
     return static_cast<double>(current - s_start_time) / static_cast<double>(frequency);
 }
 
+void SDLHelper::setWindowTitle(const char* title) {
+    if (m_window) {
+        SDL_SetWindowTitle(m_window, title);
+    }
+}
+
 void SDLHelper::log_gl_info() const {
     const GLubyte* renderer = glGetString(GL_RENDERER);
     const GLubyte* vendor = glGetString(GL_VENDOR);

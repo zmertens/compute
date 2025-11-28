@@ -10,7 +10,7 @@ This project uses CMake as its build system. To build the project, follow these 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/zmertens/compute.git
+   git clone https://github.com/zmertens/compute.git --recurse-submodules
    cd compute
    ```
    
@@ -25,6 +25,7 @@ This project uses CMake as its build system. To build the project, follow these 
    cmake ..
    ```
 
+## Learning Materials
 
   - https://github.com/LWJGL/lwjgl3-wiki/wiki/2.6.1.-Ray-tracing-with-OpenGL-Compute-Shaders
   - https://learnopengl.com
