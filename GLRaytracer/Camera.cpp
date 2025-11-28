@@ -136,17 +136,21 @@ glm::mat4 Camera::getInfPerspective(const float aspectRatio) const
 
 /**
  * @brief Camera::getFrustumEyeRay
- * @param ar
- * @param x
- * @param y
- * @return
+ * @param ar - aspect ratio
+ * @param x - NDC x coordinate (-1 to 1)
+ * @param y - NDC y coordinate (-1 to 1)
+ * @return normalized ray direction from camera through the frustum corner
  */
 glm::vec3 Camera::getFrustumEyeRay(float ar, int x, int y) const
 {
+    // Transform from NDC space to world space using inverse view-projection
+    // Use z=1 to place the point on the far plane in NDC space
     glm::mat4 invViewProj = glm::inverse(getPerspective(ar) * getLookAt());
-    glm::vec4 eyeVec = invViewProj * glm::vec4(x, y, 0, 1);
+    glm::vec4 eyeVec = invViewProj * glm::vec4(static_cast<float>(x), static_cast<float>(y), 1.0f, 1.0f);
     eyeVec /= eyeVec.w;
-    return glm::normalize(glm::vec3(eyeVec.x, eyeVec.y, eyeVec.z) - mPosition);
+
+    // Return ray direction from camera position to the frustum corner point
+    return glm::normalize(glm::vec3(eyeVec) - mPosition);
 }
 
 /**

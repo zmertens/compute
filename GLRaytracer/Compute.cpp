@@ -12,9 +12,12 @@ std::unordered_map<std::uint8_t, bool> Compute::mKepMap;
 
 
 Compute::Compute()
-    : mCamera(glm::vec3(-100.f, 25.f, -100.f))
+    : mCamera(glm::vec3(0.0f, 50.0f, 200.0f), -90.0f, -10.0f, 65.0f, 0.1f, 500.0f)
       , mPlayer(mCamera)
 {
+    // Camera positioned above and in front of sphere circle
+    // Looking towards center with slight downward pitch
+    // Far plane set to 500 to see all spheres at radius ~125
 }
 
 void Compute::run()
@@ -28,6 +31,13 @@ void Compute::run()
     }
 
     printOpenGlInfo();
+
+    // Debug camera setup
+    SDL_Log("Camera initialized at position: (%.2f, %.2f, %.2f)",
+            mCamera.getPosition().x, mCamera.getPosition().y, mCamera.getPosition().z);
+    SDL_Log("Camera target direction: (%.2f, %.2f, %.2f)",
+            mCamera.getTarget().x, mCamera.getTarget().y, mCamera.getTarget().z);
+    SDL_Log("Camera far plane: %.2f", mCamera.getFar());
 
     glEnable(GL_MULTISAMPLE);
 
@@ -178,13 +188,14 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
                           Utils::getRandomFloat(0.05f, 1.0f), Utils::getRandomFloat(0.05f, 1.0f));
 
         float angle = static_cast<float>(index) / static_cast<float>(TOTAL_SPHERES) * 360.0f;
+        float angleRad = glm::radians(angle);
         float displacement = Utils::getRandomFloat(-offset, offset);
 
-        float xpos = glm::sin(angle) * imgCircleRadius + displacement;
+        float xpos = glm::sin(angleRad) * imgCircleRadius + displacement;
         displacement = Utils::getRandomFloat(-offset, offset);
         GLfloat y = std::abs(displacement) * 7.5f; // y value has smaller displacement
         displacement = Utils::getRandomFloat(-offset, offset);
-        GLfloat z = glm::cos(angle) * imgCircleRadius + displacement;
+        GLfloat z = glm::cos(angleRad) * imgCircleRadius + displacement;
 
         glm::vec3 center = glm::vec3(xpos, y, z);
 
