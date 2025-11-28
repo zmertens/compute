@@ -41,7 +41,7 @@ inline float getRandomInt(int low, int high)
     std::random_device rd;
     std::mt19937 mt(rd());
     std::uniform_int_distribution<int> dist (low, high);
-    return dist(mt);
+    return static_cast<float>(dist(mt));
 }
 
 /**

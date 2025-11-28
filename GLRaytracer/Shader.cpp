@@ -400,6 +400,9 @@ GLenum Shader::getShaderType(const int shaderType) const
             return GL_TESS_EVALUATION_SHADER;
         case ShaderTypes::COMPUTE_SHADER:
           return GL_COMPUTE_SHADER;
+        default:
+            // Should never reach here, but return a default to avoid warning
+            return GL_VERTEX_SHADER;
     } // switch
 }
 
@@ -429,7 +432,7 @@ std::unordered_map<int, std::string> Shader::getFileNames() const
  */
 GLuint Shader::compile(const int shaderType, const std::string& shaderCode)
 {
-    GLint length = shaderCode.length();
+    GLint length = static_cast<GLint>(shaderCode.length());
     const GLchar* glShaderString = shaderCode.c_str();
 
     GLenum glShaderType = getShaderType(shaderType);
@@ -451,7 +454,7 @@ GLuint Shader::compile(const int shaderType, const std::string& shaderCode)
     }
     else if (success)
     {
-        printf("%s compiled successfully\n", mFileNames.at(shaderType).c_str(), infoLog);
+        printf("%s compiled successfully\n", mFileNames.at(shaderType).c_str());
     }
 
     return shaderId;
@@ -486,7 +489,7 @@ GLuint Shader::compile(const int shaderType, const GLchar* shaderCode)
     }
     else if (success)
     {
-        printf("%s compiled successfully\n", mFileNames.at(shaderType).c_str(), infoLog);
+        printf("%s compiled successfully\n", mFileNames.at(shaderType).c_str());
     }
 
     return shaderId;

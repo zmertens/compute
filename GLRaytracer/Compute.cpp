@@ -273,23 +273,25 @@ void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Spher
     compute.setUniform("uCamera.eye", mCamera.getPosition());
     compute.setUniform("uCamera.far", mCamera.getFar());
     // aspect ratio is hardcoded which is not good
-    compute.setUniform("uCamera.ray00", mCamera.getFrustumEyeRay(ar, -1.0f, -1.0f));
-    compute.setUniform("uCamera.ray01", mCamera.getFrustumEyeRay(ar, -1.0f, 1.0f));
-    compute.setUniform("uCamera.ray10", mCamera.getFrustumEyeRay(ar, 1.0f, -1.0f));
-    compute.setUniform("uCamera.ray11", mCamera.getFrustumEyeRay(ar, 1.0f, 1.0f));
+    compute.setUniform("uCamera.ray00", mCamera.getFrustumEyeRay(ar, -1, -1));
+    compute.setUniform("uCamera.ray01", mCamera.getFrustumEyeRay(ar, -1, 1));
+    compute.setUniform("uCamera.ray10", mCamera.getFrustumEyeRay(ar, 1, -1));
+    compute.setUniform("uCamera.ray11", mCamera.getFrustumEyeRay(ar, 1, 1));
 
     // Get current time for sphere animation (removed 'static' to update every frame)
-    double elapsed = SDLHelper::getTime();
+    auto elapsed = static_cast<float>(SDLHelper::getTime());
     for (unsigned int index = 0; index != TOTAL_SPHERES; ++index)
     {
         glm::mat4 transform;
         if (index % 2 == 0)
-            transform = glm::translate(glm::vec3(glm::cos(elapsed) * 10.0f, glm::sin(elapsed) * 10.0f, 0));
+            transform = glm::translate(glm::vec3(glm::cos(elapsed) * 10.0f, glm::sin(elapsed) * 10.0f, 0.0f));
         else
-            transform = glm::translate(glm::vec3(0, glm::cos(elapsed) * 20.0f, glm::sin(elapsed) * 20.0f));
-        compute.setUniform("uSpheres[" + Utils::toString(index) + "].center",
-                           glm::vec3(transform * glm::vec4(spheres.at(index).center.x, spheres.at(index).center.y,
-                                                           spheres.at(index).center.z, 1.0)));
+            transform = glm::translate(glm::vec3(0.0f, glm::cos(elapsed) * 20.0f, glm::sin(elapsed) * 20.0f));
+
+        // Get original center as vec3 and transform it
+        glm::vec3 originalCenter = glm::vec3(spheres.at(index).center);
+        glm::vec3 transformedCenter = glm::vec3(transform * glm::vec4(originalCenter, 1.0f));
+        compute.setUniform("uSpheres[" + Utils::toString(index) + "].center", transformedCenter);
     }
 
     glBindImageTexture(0, tex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
