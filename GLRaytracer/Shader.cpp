@@ -147,7 +147,7 @@ std::string Shader::getGlslUniforms() const
         char* name = new char[nameBufSize];
 
         glGetProgramResourceName(mProgram, GL_UNIFORM, i, nameBufSize, nullptr, name);
-       SDL_Log("location = %d, name = %s, type = %s\n",
+//       SDL_Log("location = %d, name = %s, type = %s\n",
 //            results[2], name, getStringFromType(results[1]).c_str());
 
         retString += "\tlocation = " + Utils::toString(results[2]) + ", name = "
@@ -157,6 +157,8 @@ std::string Shader::getGlslUniforms() const
     }
 
     return retString;
+#else
+    return "GLSL Uniforms not supported (requires OpenGL 4.3+)\n";
 #endif
 }
 
@@ -191,6 +193,8 @@ std::string Shader::getGlslAttribs() const
         delete [] name;
     }
     return retString;
+#else
+    return "GLSL Attributes not supported (requires OpenGL 4.3+)\n";
 #endif
 }
 

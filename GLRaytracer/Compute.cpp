@@ -18,10 +18,11 @@ Compute::Compute()
 
 void Compute::run()
 {
-    SDLHelper glfwHandler;
-    bool success = glfwHandler.init();
+    SDLHelper sdlHandler;
+    bool success = sdlHandler.init();
     if (!success) {
-        std::cout << "GLFW Not initialized" << std::endl;
+        std::cout << "SDL Not initialized" << std::endl;
+        return;
     }
 
     printOpenGlInfo();
@@ -74,18 +75,12 @@ void Compute::run()
     float timeSinceLastUpdate = 0.0f;
     float mouseWheelDelta = 0.0f;
     bool running = true;
-    while (!glfwWindowShouldClose(glfwHandler.getGlfwWindow()))
+    while (!sdlHandler.shouldClose())
     {
-        glfwPollEvents();
+        sdlHandler.pollEvents();
 
-        // Reset input keys to false ever frame
-        auto&& inputs = std::move(glfwHandler.getKeys());
-        for (auto input : inputs) {
-            input = false;
-        }
-
-        static double lastTime = static_cast<double>(glfwGetTime()) / 1000.0;
-        double currentTime = static_cast<double>(glfwGetTime()) / 1000.0;
+        static double lastTime = SDLHelper::getTime();
+        double currentTime = SDLHelper::getTime();
         float deltaTime = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
         accumulator += deltaTime;
@@ -93,7 +88,7 @@ void Compute::run()
         // while (accumulator > timePerFrame)
         // {
             accumulator -= timePerFrame;
-            input(glfwHandler, mouseWheelDelta, running);
+            input(sdlHandler, mouseWheelDelta, running);
             update(deltaTime, timePerFrame);
         // }
 
@@ -101,8 +96,7 @@ void Compute::run()
 
         render(computeShader, tracerShader, spheres, ar, vao, screenTex);
 
-        glfwHandler.swapBuffers();
-        // glfwPollEvents();
+        sdlHandler.swapBuffers();
         printFramesToConsole(frameCounter, timeSinceLastUpdate, deltaTime);
     }
 
@@ -110,7 +104,7 @@ void Compute::run()
     glDeleteBuffers(1, &shapeSSBO);
     glDeleteTextures(1, &screenTex);
 
-    glfwHandler.cleanUp();
+    sdlHandler.cleanUp();
 
 
 }
@@ -235,16 +229,16 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
     compute.setUniform("uPlane.normal", plane.normal);
 } // initCompute
 
-void Compute::input(SDLHelper& glfwHandler, const float mouseWheelDelta, bool& running)
+void Compute::input(SDLHelper& sdlHandler, const float mouseWheelDelta, bool& running)
 {
     float mouseWheelDy = 0;
 
     double coordX = 0.0, coordY = 0.0;
-    glfwGetCursorPos(glfwHandler.getGlfwWindow(), &coordX, &coordY);
+    sdlHandler.getCursorPos(coordX, coordY);
     glm::vec2 coords = glm::vec2(coordX, coordY);
 
     // handle realtime input
-    mPlayer.input(glfwHandler, mouseWheelDy, coords);
+    mPlayer.input(sdlHandler, mouseWheelDy, coords);
 }
 
 void Compute::update(const float dt, const double timeSinceInit)
@@ -263,7 +257,7 @@ void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Spher
 
     compute.bind();
 
-    double time = static_cast<double>(glfwGetTime()) / 1000.0;
+    double time = SDLHelper::getTime();
     compute.setUniform("uTime", time);
     compute.setUniform("uCamera.eye", mCamera.getPosition());
     compute.setUniform("uCamera.far", mCamera.getFar());
@@ -273,7 +267,7 @@ void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Spher
     compute.setUniform("uCamera.ray10", mCamera.getFrustumEyeRay(ar, 1.0f, -1.0f));
     compute.setUniform("uCamera.ray11", mCamera.getFrustumEyeRay(ar, 1.0f, 1.0f));
 
-   static double elapsed = static_cast<double>(glfwGetTime()) / 1000.0;
+   static double elapsed = SDLHelper::getTime();
    for (unsigned int index = 0; index != TOTAL_SPHERES; ++index)
    {
         glm::mat4 transform;
@@ -298,9 +292,9 @@ void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Spher
     glDrawArrays(type, 0, 4);
 } // render
 
-void Compute::glfwEvents(SDLHelper& glfwHandler, float& mouseWheelDy, bool& running)
+void Compute::sdlEvents(SDLHelper& sdlHandler, float& mouseWheelDy, bool& running)
 {
-
+    // Event handling can be expanded here if needed
 }
 
 void Compute::printFramesToConsole(unsigned int& frameCounter,

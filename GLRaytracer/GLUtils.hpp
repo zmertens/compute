@@ -2,6 +2,7 @@
 #define GLUTILS_HPP
 
 #include <string>
+#include <glad/glad.h>
 
 #include "SDLHelper.hpp"
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4..4.15)
+cmake_minimum_required(VERSION 3.5..4.15)
 
 project("compute" LANGUAGES C CXX)
 
@@ -38,14 +38,6 @@ if (NOT SDL3_FOUND)
     FetchContent_MakeAvailable(SDL)
 endif ()
 
-# Copy shared/dlls on Windows only
-if (WIN32)
-    add_custom_command(
-            TARGET ${COMPUTE_APP_NAME} POST_BUILD
-            COMMAND "${CMAKE_COMMAND}" -E copy $<TARGET_FILE:SDL3::SDL3-shared> $<TARGET_FILE_DIR:${COMPUTE_APP_NAME}>
-            VERBATIM
-    )
-endif ()
 
 set(GL_RAYTRACER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/GLRaytracer)
 
@@ -73,6 +65,15 @@ target_compile_features(${COMPUTE_APP_NAME} PRIVATE cxx_std_20)
 target_link_libraries(${COMPUTE_APP_NAME} OpenGL::GL SDL3::SDL3 glad)
 
 target_include_directories(${COMPUTE_APP_NAME} PRIVATE ${GLM_DIR} ${GLAD_DIR}/include ${STB_IMAGE_DIR} ${GL_RAYTRACER_DIR})
+
+# Copy shared/dlls on Windows only
+if (WIN32)
+    add_custom_command(
+            TARGET ${COMPUTE_APP_NAME} POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy $<TARGET_FILE:SDL3::SDL3-shared> $<TARGET_FILE_DIR:${COMPUTE_APP_NAME}>
+            VERBATIM
+    )
+endif ()
 
 # copy resources / shader files
 file(COPY ${CMAKE_SOURCE_DIR}/shaders DESTINATION ${CMAKE_BINARY_DIR})

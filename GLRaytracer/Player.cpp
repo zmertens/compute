@@ -57,44 +57,42 @@ void Player::move(const glm::vec3& vel, float dt)
 }
 
 /**
- * (currentMouseStates & SDL_BUTTON(SDL_BUTTON_LEFT)
  * @brief Player::input
- * @param glfwHandler
+ * @param sdlHandler
  * @param mouseWheelDelta
  * @param coords
- * @param inputs
  */
-void Player::input(const SDLHelper& glfwHandler, const float mouseWheelDelta,
+void Player::input(const SDLHelper& sdlHandler, const float mouseWheelDelta,
     const glm::vec2& coords)
 {
     glm::vec2 winCenter = glm::vec2(
         static_cast<float>(SDLHelper::GLFW_WINDOW_X) * 0.5f,
         static_cast<float>(SDLHelper::GLFW_WINDOW_Y) * 0.5f);
 
-    auto inputs = glfwHandler.getKeys();
+    const auto& inputs = sdlHandler.getKeys();
 
     // Mouse lock
-    if (inputs.at(GLFW_KEY_TAB)) {
+    if (inputs[SDL_SCANCODE_TAB]) {
         setMouseLocked(!getMouseLocked());
     }
 
     // keyboard movements
-    if (inputs.at(GLFW_KEY_W))
+    if (inputs[SDL_SCANCODE_W])
     {
         mMovementDir += mFirstPersonCamera.getTarget();
     }
 
-    if (inputs.at(GLFW_KEY_S))
+    if (inputs[SDL_SCANCODE_S])
     {
         mMovementDir -= mFirstPersonCamera.getTarget();
     }
 
-    if (inputs.at(GLFW_KEY_A))
+    if (inputs[SDL_SCANCODE_A])
     {
         mMovementDir -= mFirstPersonCamera.getRight();
     }
 
-    if (inputs.at(GLFW_KEY_D))
+    if (inputs[SDL_SCANCODE_D])
     {
         mMovementDir += mFirstPersonCamera.getRight();
     }
@@ -112,8 +110,7 @@ void Player::input(const SDLHelper& glfwHandler, const float mouseWheelDelta,
         if (xOffset || yOffset)
         {
             mFirstPersonCamera.rotate(xOffset * scMouseSensitivity, yOffset * scMouseSensitivity, false, false);
-            // SDL_WarpMouseInWindow(glfwHandler.getSdlWindow(), winCenter.x, winCenter.y);
-            glfwSetCursorPos(glfwHandler.getGlfwWindow(), winCenter.x, winCenter.y);
+            const_cast<SDLHelper&>(sdlHandler).setCursorPos(winCenter.x, winCenter.y);
         }
     }
 }
@@ -318,6 +315,7 @@ bool Player::isOnExitPoint(const glm::vec3& origin) const
 //    });
 
 //    return (exited != exitPoints.end());
+    return false; // Placeholder until level system is implemented
 }
 
 /**
