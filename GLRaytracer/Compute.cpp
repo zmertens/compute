@@ -4,7 +4,7 @@
 
 #include <glad/glad.h>
 
-#define TOTAL_SPHERES 20
+#define TOTAL_SPHERES 200
 #define TOTAL_LIGHTS 5
 
 const glm::vec3 Compute::CLEAR_COLOR = glm::vec3(0.f);
@@ -18,6 +18,9 @@ Compute::Compute()
       , mSamplesPerBatch(4)
       , mTotalBatches(250)
       , mUsePathTracer(true)  // Set to true to use new path tracer, false for legacy
+      , mLastCameraPosition(mCamera.getPosition())
+      , mLastCameraYaw(mCamera.getYaw())
+      , mLastCameraPitch(mCamera.getPitch())
 {
     // Camera positioned above and in front of sphere circle
     // Looking towards center with slight downward pitch
@@ -124,6 +127,15 @@ void Compute::run()
     } else {
         initCompute(computeShader, shapeSSBO, spheres, plane, lights);
     }
+
+    // Display control instructions
+    SDL_Log("\n=== CONTROLS ===");
+    SDL_Log("Movement: WASD or Arrow Keys");
+    SDL_Log("Camera Rotation: Hold Left Mouse Button and move mouse");
+    SDL_Log("Alternative: Press TAB to toggle mouse lock");
+    SDL_Log("FOV Adjustment: Mouse Wheel");
+    SDL_Log("Exit: ESC or close window");
+    SDL_Log("================\n");
 
     constexpr float timePerFrame = 1.0f / 60.0f;
     float accumulator = 0.0f;
@@ -491,10 +503,39 @@ void Compute::renderPathTracer(Shader& pathtracer, Shader& displayShader, float 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Check if camera has moved - if so, reset accumulation
+    glm::vec3 currentPos = mCamera.getPosition();
+    float currentYaw = mCamera.getYaw();
+    float currentPitch = mCamera.getPitch();
+
+    const float posEpsilon = 0.01f;
+    const float angleEpsilon = 0.1f;
+
+    if (glm::distance(currentPos, mLastCameraPosition) > posEpsilon ||
+        std::abs(currentYaw - mLastCameraYaw) > angleEpsilon ||
+        std::abs(currentPitch - mLastCameraPitch) > angleEpsilon)
+    {
+        // Camera moved - reset accumulation
+        mCurrentBatch = 0;
+        mLastCameraPosition = currentPos;
+        mLastCameraYaw = currentYaw;
+        mLastCameraPitch = currentPitch;
+
+        // Clear accumulation texture (OpenGL 4.3 compatible method)
+        // The shader will handle clearing by checking if uBatch == 0
+        // No need to explicitly clear the texture
+    }
+
     // Only compute if we haven't finished all batches
     if (mCurrentBatch < mTotalBatches)
     {
         pathtracer.bind();
+
+        // Check for OpenGL errors after shader bind
+        GLenum err = glGetError();
+        if (err != GL_NO_ERROR) {
+            SDL_Log("OpenGL error after shader bind: 0x%x", err);
+        }
 
         // Set camera uniforms
         pathtracer.setUniform("uCamera.eye", mCamera.getPosition());
@@ -519,6 +560,12 @@ void Compute::renderPathTracer(Shader& pathtracer, Shader& displayShader, float 
             1
         );
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+        // Check for errors after compute dispatch
+        err = glGetError();
+        if (err != GL_NO_ERROR) {
+            SDL_Log("OpenGL error after compute dispatch: 0x%x", err);
+        }
 
         mCurrentBatch++;
 

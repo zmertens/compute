@@ -71,28 +71,37 @@ void Player::input(const SDLHelper& sdlHandler, const float mouseWheelDelta,
 
     const auto& inputs = sdlHandler.getKeys();
 
-    // Mouse lock
+    // Mouse lock with Tab key
     if (inputs[SDL_SCANCODE_TAB]) {
         setMouseLocked(!getMouseLocked());
     }
 
+    // Also support left mouse button for camera rotation (with safety check)
+    bool leftMousePressed = false;
+    try {
+        leftMousePressed = sdlHandler.getMouseButton(0);  // 0 = left button
+    } catch (...) {
+        // Safety: if mouse button check fails, just use mouse lock
+        leftMousePressed = false;
+    }
+
     // keyboard movements
-    if (inputs[SDL_SCANCODE_W])
+    if (inputs[SDL_SCANCODE_W] || inputs[SDL_SCANCODE_UP])
     {
         mMovementDir += mFirstPersonCamera.getTarget();
     }
 
-    if (inputs[SDL_SCANCODE_S])
+    if (inputs[SDL_SCANCODE_S] || inputs[SDL_SCANCODE_DOWN])
     {
         mMovementDir -= mFirstPersonCamera.getTarget();
     }
 
-    if (inputs[SDL_SCANCODE_A])
+    if (inputs[SDL_SCANCODE_A] || inputs[SDL_SCANCODE_LEFT])
     {
         mMovementDir -= mFirstPersonCamera.getRight();
     }
 
-    if (inputs[SDL_SCANCODE_D])
+    if (inputs[SDL_SCANCODE_D] || inputs[SDL_SCANCODE_RIGHT])
     {
         mMovementDir += mFirstPersonCamera.getRight();
     }
@@ -101,8 +110,8 @@ void Player::input(const SDLHelper& sdlHandler, const float mouseWheelDelta,
     if (mouseWheelDelta != 0)
         mFirstPersonCamera.updateFieldOfView(mouseWheelDelta);
 
-    // rotations (mouse movements)
-    if (mMouseLocked)
+    // rotations (mouse movements) - works with Tab lock OR left mouse button held
+    if (mMouseLocked || leftMousePressed)
     {
         float xOffset = coords.x - winCenter.x;
         float yOffset = winCenter.y - coords.y;

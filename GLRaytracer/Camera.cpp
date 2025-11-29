@@ -279,3 +279,14 @@ void Camera::setFar(float far)
 {
     mFar = far;
 }
+
+float Camera::getYaw() const
+{
+    return mYaw;
+}
+
+float Camera::getPitch() const
+{
+    return mPitch;
+}
+

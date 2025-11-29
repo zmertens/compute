@@ -48,6 +48,11 @@ public:
     /// @return Array of key states indexed by SDL_Scancode
     [[nodiscard]] const std::array<bool, 512>& getKeys() const { return m_key_state; }
 
+    /// @brief Get mouse button state
+    /// @param button Mouse button index (0=left, 1=middle, 2=right)
+    /// @return true if button is pressed, false otherwise
+    [[nodiscard]] bool getMouseButton(int button) const;
+
     /// @brief Get cursor position (GLFW-compatible)
     /// @param xpos Output parameter for x coordinate
     /// @param ypos Output parameter for y coordinate
@@ -73,6 +78,7 @@ private:
     SDL_Window* m_window{nullptr};
     SDL_GLContext m_context{nullptr};
     std::array<bool, 512> m_key_state{};
+    std::array<bool, 5> m_mouse_button_state{};  // Left, middle, right, X1, X2
     bool m_should_close{false};
     static Uint64 s_start_time;
 };

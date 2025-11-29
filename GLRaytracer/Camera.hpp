@@ -44,6 +44,9 @@ public:
     float getFar() const;
     void setFar(float far);
 
+    float getYaw() const;
+    float getPitch() const;
+
 private:
     static const float scMaxYawValue;
     static const float scMaxPitchValue;

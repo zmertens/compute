@@ -44,6 +44,9 @@ private:
     uint32_t mSamplesPerBatch;
     uint32_t mTotalBatches;
     bool mUsePathTracer;  // Toggle between old raytracer and new path tracer
+    glm::vec3 mLastCameraPosition;
+    float mLastCameraYaw;
+    float mLastCameraPitch;
 
     void initCompute(Shader& compute, GLuint shapeSSBO,
         std::vector<Sphere>& spheres, Plane& plane,

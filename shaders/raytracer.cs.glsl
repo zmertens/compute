@@ -1,7 +1,7 @@
 #version 450 core
 
 // These defines should match the Compute.cpp source
-#define MAX_SPHERES 20
+#define MAX_SPHERES 200
 #define MAX_LIGHTS 5
 #define SPHERE_ID 0
 #define PLANE_ID 1

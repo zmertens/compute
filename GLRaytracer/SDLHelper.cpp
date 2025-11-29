@@ -98,10 +98,25 @@ void SDLHelper::pollEvents() {
                 if (e.key.scancode < 512) {
                     m_key_state[e.key.scancode] = true;
                 }
+                // ESC key to exit
+                if (e.key.scancode == SDL_SCANCODE_ESCAPE) {
+                    m_should_close = true;
+                }
                 break;
             case SDL_EVENT_KEY_UP:
                 if (e.key.scancode < 512) {
                     m_key_state[e.key.scancode] = false;
+                }
+                break;
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                // SDL3 buttons are 1-indexed: 1=left, 2=middle, 3=right, 4=X1, 5=X2
+                if (e.button.button >= 1 && e.button.button <= 5) {
+                    m_mouse_button_state[e.button.button - 1] = true;
+                }
+                break;
+            case SDL_EVENT_MOUSE_BUTTON_UP:
+                if (e.button.button >= 1 && e.button.button <= 5) {
+                    m_mouse_button_state[e.button.button - 1] = false;
                 }
                 break;
             case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
@@ -144,6 +159,14 @@ void SDLHelper::setCursorPos(double xpos, double ypos) {
     if (m_window) {
         SDL_WarpMouseInWindow(m_window, static_cast<float>(xpos), static_cast<float>(ypos));
     }
+}
+
+bool SDLHelper::getMouseButton(int button) const {
+    // Validate array bounds before accessing
+    if (button >= 0 && button < static_cast<int>(m_mouse_button_state.size())) {
+        return m_mouse_button_state[button];
+    }
+    return false;
 }
 
 double SDLHelper::getTime() {
