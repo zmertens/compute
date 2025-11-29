@@ -36,7 +36,14 @@ jobs:
           libxcursor-dev \
           libxinerama-dev \
           libxxf86vm-dev \
-          git
+          xvfb \
+          xauth
+
+    - name: Test Xvfb
+      run: |
+        Xvfb :99 -screen 0 1024x768x24 &
+        sleep 2
+        ps aux | grep Xvfb
 
     # Setup OpenGL (software rendering for CI)
     - uses: openrndr/setup-opengl@v1.1
