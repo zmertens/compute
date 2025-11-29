@@ -4,35 +4,68 @@ on:
   push:
     branches: [ dev ]
   pull_request:
-    branches: [ master, dev ]
+    branches: [ main, dev ]
 
 env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
 
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    # Checkout code with submodules (for GLM, GLAD, STB)
+    - uses: actions/checkout@v4
       with:
-        submodules: "true"
-    - uses: openrndr/setup-opengl@v1.1
+        submodules: recursive
 
+    # Install system dependencies
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libglfw3-dev libglm-dev mesa-utils libfreetype6-dev libvulkan-dev libxinerama-dev libxcursor-dev libxi-dev
-    - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        sudo apt-get install -y \
+          build-essential \
+          cmake \
+          ninja-build \
+          libgl1-mesa-dev \
+          libglu1-mesa-dev \
+          mesa-common-dev \
+          libx11-dev \
+          libxrandr-dev \
+          libxi-dev \
+          libxcursor-dev \
+          libxinerama-dev \
+          libxxf86vm-dev \
+          git
 
+    # Setup OpenGL (software rendering for CI)
+    - uses: openrndr/setup-opengl@v1.1
+
+    # Verify installed versions
+    - name: Check Versions
+      run: |
+        echo "CMake version:"
+        cmake --version
+        echo "GCC version:"
+        gcc --version
+        echo "G++ version:"
+        g++ --version
+
+    # Configure CMake
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -G Ninja
+
+    # Build the project
     - name: Build
-      # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel
+
+    # Optional: Upload build artifacts
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: compute-${{env.BUILD_TYPE}}-linux
+        path: |
+          ${{github.workspace}}/build/compute
+          ${{github.workspace}}/build/shaders/
+        retention-days: 7
