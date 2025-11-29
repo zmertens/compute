@@ -45,7 +45,7 @@ bool SDLHelper::init() {
 
     // Create window
     const Uint32 window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
-    m_window = SDL_CreateWindow("Compute Raytracer", GLFW_WINDOW_X, GLFW_WINDOW_Y, window_flags);
+    m_window = SDL_CreateWindow("Compute Raytracer", SDL_WINDOW_WIDTH, SDL_WINDOW_HEIGHT, window_flags);
 
     if (m_window == nullptr) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL_CreateWindow failed: %s\n", SDL_GetError());
@@ -82,7 +82,7 @@ bool SDLHelper::init() {
     // Center window
     SDL_SetWindowPosition(m_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
-    SDL_Log("SDL initialized successfully: Compute Raytracer (%dx%d)\n", GLFW_WINDOW_X, GLFW_WINDOW_Y);
+    SDL_Log("SDL initialized successfully: Compute Raytracer (%dx%d)\n", SDL_WINDOW_WIDTH, SDL_WINDOW_HEIGHT);
 
     return true;
 }

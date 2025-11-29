@@ -12,8 +12,8 @@
 class SDLHelper {
 public:
     // Window dimensions (legacy GLFW compatibility)
-    static constexpr int GLFW_WINDOW_X = 1280;
-    static constexpr int GLFW_WINDOW_Y = 720;
+    static constexpr int SDL_WINDOW_WIDTH = 1280;
+    static constexpr int SDL_WINDOW_HEIGHT = 720;
 
     SDLHelper();
     ~SDLHelper();
@@ -29,7 +29,7 @@ public:
 
     /// @brief Get the SDL window handle
     /// @return Pointer to SDL_Window
-    SDL_Window* getWindow() const { return m_window; }
+    [[nodiscard]] SDL_Window* getWindow() const { return m_window; }
 
     /// @brief Check if window should close (GLFW-compatible)
     /// @return true if quit was requested, false otherwise
@@ -46,7 +46,7 @@ public:
 
     /// @brief Get keyboard state (GLFW-compatible)
     /// @return Array of key states indexed by SDL_Scancode
-    const std::array<bool, 512>& getKeys() const { return m_key_state; }
+    [[nodiscard]] const std::array<bool, 512>& getKeys() const { return m_key_state; }
 
     /// @brief Get cursor position (GLFW-compatible)
     /// @param xpos Output parameter for x coordinate

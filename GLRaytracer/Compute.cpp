@@ -14,6 +14,10 @@ std::unordered_map<std::uint8_t, bool> Compute::mKepMap;
 Compute::Compute()
     : mCamera(glm::vec3(0.0f, 50.0f, 200.0f), -90.0f, -10.0f, 65.0f, 0.1f, 500.0f)
       , mPlayer(mCamera)
+      , mCurrentBatch(0)
+      , mSamplesPerBatch(4)
+      , mTotalBatches(250)
+      , mUsePathTracer(true)  // Set to true to use new path tracer, false for legacy
 {
     // Camera positioned above and in front of sphere circle
     // Looking towards center with slight downward pitch
@@ -48,7 +52,13 @@ void Compute::run()
     tracerShader.bind();
 
     Shader computeShader;
-    computeShader.compileAndAttachShader(ShaderTypes::COMPUTE_SHADER, "./shaders/raytracer.cs.glsl");
+    if (mUsePathTracer) {
+        computeShader.compileAndAttachShader(ShaderTypes::COMPUTE_SHADER, "./shaders/pathtracer.cs.glsl");
+        SDL_Log("Using PBR Path Tracer");
+    } else {
+        computeShader.compileAndAttachShader(ShaderTypes::COMPUTE_SHADER, "./shaders/raytracer.cs.glsl");
+        SDL_Log("Using Legacy Raytracer");
+    }
     computeShader.linkProgram();
     computeShader.bind();
 
@@ -57,29 +67,63 @@ void Compute::run()
     Plane plane;
 
     GLuint vao;
-    GLuint screenTex;
+    GLuint screenTex;      // For legacy raytracer
+    GLuint accumTex;       // For path tracer accumulation
+    GLuint displayTex;     // For path tracer display
     GLuint shapeSSBO;
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    glGenTextures(1, &screenTex);
-    glBindTexture(GL_TEXTURE_2D, screenTex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F,
-                   static_cast<GLsizei>(SDLHelper::GLFW_WINDOW_X),
-                   static_cast<GLsizei>(SDLHelper::GLFW_WINDOW_Y));
-    glBindImageTexture(0, screenTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+    // Create textures based on mode
+    if (mUsePathTracer) {
+        // Create accumulation texture
+        glGenTextures(1, &accumTex);
+        glBindTexture(GL_TEXTURE_2D, accumTex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F,
+                       static_cast<GLsizei>(SDLHelper::SDL_WINDOW_WIDTH),
+                       static_cast<GLsizei>(SDLHelper::SDL_WINDOW_HEIGHT));
+
+        // Create display texture
+        glGenTextures(1, &displayTex);
+        glBindTexture(GL_TEXTURE_2D, displayTex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F,
+                       static_cast<GLsizei>(SDLHelper::SDL_WINDOW_WIDTH),
+                       static_cast<GLsizei>(SDLHelper::SDL_WINDOW_HEIGHT));
+
+        screenTex = displayTex;  // For cleanup
+    } else {
+        // Legacy single texture
+        glGenTextures(1, &screenTex);
+        glBindTexture(GL_TEXTURE_2D, screenTex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F,
+                       static_cast<GLsizei>(SDLHelper::SDL_WINDOW_WIDTH),
+                       static_cast<GLsizei>(SDLHelper::SDL_WINDOW_HEIGHT));
+        glBindImageTexture(0, screenTex, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+    }
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
     glGenBuffers(1, &shapeSSBO);
 
-    initCompute(computeShader, shapeSSBO, spheres, plane, lights);
+    if (mUsePathTracer) {
+        initPathTracer(computeShader, shapeSSBO, spheres);
+    } else {
+        initCompute(computeShader, shapeSSBO, spheres, plane, lights);
+    }
 
     constexpr float timePerFrame = 1.0f / 60.0f;
     float accumulator = 0.0f;
@@ -105,9 +149,13 @@ void Compute::run()
             update(deltaTime);
         }
 
-        float ar = static_cast<float>(SDLHelper::GLFW_WINDOW_X) / static_cast<float>(SDLHelper::GLFW_WINDOW_Y);
+        float ar = static_cast<float>(SDLHelper::SDL_WINDOW_WIDTH) / static_cast<float>(SDLHelper::SDL_WINDOW_HEIGHT);
 
-        render(computeShader, tracerShader, spheres, ar, vao, screenTex);
+        if (mUsePathTracer) {
+            renderPathTracer(computeShader, tracerShader, ar, vao, accumTex, displayTex);
+        } else {
+            render(computeShader, tracerShader, spheres, ar, vao, screenTex);
+        }
 
         sdlHandler.swapBuffers();
 
@@ -251,6 +299,124 @@ void Compute::initCompute(Shader& compute, GLuint shapeSSBO,
     compute.setUniform("uPlane.normal", plane.normal);
 } // initCompute
 
+void Compute::initPathTracer(Shader& pathtracer, GLuint shapeSSBO, std::vector<Sphere>& spheres)
+{
+    pathtracer.bind();
+
+    SDL_Log("Initializing PBR Path Tracer...");
+
+    // Clear existing spheres for fresh start
+    spheres.clear();
+
+    // Create interesting scene with different material types
+    // Ground sphere (large Lambertian)
+    spheres.emplace_back(
+        glm::vec3(0.0f, -1000.0f, 0.0f),  // center
+        1000.0f,                           // radius
+        glm::vec3(0.5f, 0.5f, 0.5f),      // color (gray)
+        MaterialType::LAMBERTIAN,          // type
+        0.0f,                              // fuzz (unused for lambertian)
+        0.0f                               // refractive index (unused)
+    );
+
+    // Center glass sphere
+    spheres.emplace_back(
+        glm::vec3(0.0f, 1.0f, 0.0f),
+        1.0f,
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        MaterialType::DIELECTRIC,
+        0.0f,
+        1.5f  // Glass refractive index
+    );
+
+    // Left diffuse sphere
+    spheres.emplace_back(
+        glm::vec3(-4.0f, 1.0f, 0.0f),
+        1.0f,
+        glm::vec3(0.4f, 0.2f, 0.1f),
+        MaterialType::LAMBERTIAN,
+        0.0f,
+        0.0f
+    );
+
+    // Right metal sphere
+    spheres.emplace_back(
+        glm::vec3(4.0f, 1.0f, 0.0f),
+        1.0f,
+        glm::vec3(0.7f, 0.6f, 0.5f),
+        MaterialType::METAL,
+        0.0f,  // No fuzz for sharp reflection
+        0.0f
+    );
+
+    // Generate random small spheres in a circle pattern
+    float imgCircleRadius = 125.0f;
+    float offset = 15.25f;
+
+    for (unsigned int index = 4; index < TOTAL_SPHERES; ++index)
+    {
+        float matChoice = Utils::getRandomFloat(0.0f, 1.0f);
+
+        float angle = static_cast<float>(index - 4) / static_cast<float>(TOTAL_SPHERES - 4) * 360.0f;
+        float angleRad = glm::radians(angle);
+        float displacement = Utils::getRandomFloat(-offset, offset);
+
+        float xpos = glm::sin(angleRad) * imgCircleRadius + displacement;
+        displacement = Utils::getRandomFloat(-offset, offset);
+        float y = std::abs(displacement) * 7.5f;
+        displacement = Utils::getRandomFloat(-offset, offset);
+        float z = glm::cos(angleRad) * imgCircleRadius + displacement;
+
+        glm::vec3 center = glm::vec3(xpos, y, z);
+        float radius = Utils::getRandomFloat(5.0f, 12.0f);
+
+        if (matChoice < 0.7f) {
+            // Lambertian (diffuse)
+            glm::vec3 albedo(
+                Utils::getRandomFloat(0.1f, 0.9f),
+                Utils::getRandomFloat(0.1f, 0.9f),
+                Utils::getRandomFloat(0.1f, 0.9f)
+            );
+            spheres.emplace_back(center, radius, albedo, MaterialType::LAMBERTIAN, 0.0f, 0.0f);
+        } else if (matChoice < 0.9f) {
+            // Metal
+            glm::vec3 albedo(
+                Utils::getRandomFloat(0.5f, 1.0f),
+                Utils::getRandomFloat(0.5f, 1.0f),
+                Utils::getRandomFloat(0.5f, 1.0f)
+            );
+            float fuzz = Utils::getRandomFloat(0.0f, 0.5f);
+            spheres.emplace_back(center, radius, albedo, MaterialType::METAL, fuzz, 0.0f);
+        } else {
+            // Glass (dielectric)
+            spheres.emplace_back(center, radius, glm::vec3(1.0f), MaterialType::DIELECTRIC, 0.0f, 1.5f);
+        }
+    }
+
+    // Upload sphere data to SSBO
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, shapeSSBO);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, spheres.size() * sizeof(Sphere), spheres.data(), GL_STATIC_DRAW);
+
+    SDL_Log("Path tracer initialized with %zu spheres", spheres.size());
+
+#if defined(DEBUG_COMPUTE)
+    std::ofstream out;
+    out.open("./pathtracer_spheres.txt");
+    out << "Path Tracer Sphere Data:\n";
+    for (unsigned int i = 0; i < spheres.size(); ++i)
+    {
+        out << "Sphere[" << i << "]: center(" << spheres[i].center.x << ", "
+            << spheres[i].center.y << ", " << spheres[i].center.z << ")"
+            << ", radius=" << spheres[i].radius
+            << ", type=" << spheres[i].materialType
+            << ", albedo=(" << spheres[i].albedo.r << "," << spheres[i].albedo.g << "," << spheres[i].albedo.b << ")"
+            << "\n";
+    }
+    out.close();
+    SDL_Log("Path tracer sphere data written to pathtracer_spheres.txt");
+#endif
+}
+
 void Compute::input(SDLHelper& sdlHandler)
 {
     float mouseWheelDy = 0;
@@ -317,6 +483,62 @@ void Compute::render(Shader& compute, Shader& raytracer, const std::vector<Spher
     glBindVertexArray(vao);
     glDrawArrays(type, 0, 4);
 } // render
+
+void Compute::renderPathTracer(Shader& pathtracer, Shader& displayShader, float ar,
+                                 GLuint vao, GLuint accumTex, GLuint displayTex)
+{
+    // Clear screen
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Only compute if we haven't finished all batches
+    if (mCurrentBatch < mTotalBatches)
+    {
+        pathtracer.bind();
+
+        // Set camera uniforms
+        pathtracer.setUniform("uCamera.eye", mCamera.getPosition());
+        pathtracer.setUniform("uCamera.far", mCamera.getFar());
+        pathtracer.setUniform("uCamera.ray00", mCamera.getFrustumEyeRay(ar, -1, -1));
+        pathtracer.setUniform("uCamera.ray01", mCamera.getFrustumEyeRay(ar, -1, 1));
+        pathtracer.setUniform("uCamera.ray10", mCamera.getFrustumEyeRay(ar, 1, -1));
+        pathtracer.setUniform("uCamera.ray11", mCamera.getFrustumEyeRay(ar, 1, 1));
+
+        // Set batch uniforms
+        pathtracer.setUniform("uBatch", mCurrentBatch);
+        pathtracer.setUniform("uSamplesPerBatch", mSamplesPerBatch);
+
+        // Bind textures
+        glBindImageTexture(0, accumTex, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+        glBindImageTexture(1, displayTex, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
+        // Dispatch compute shader - use actual window dimensions
+        glDispatchCompute(
+            (SDLHelper::SDL_WINDOW_WIDTH + 19) / 20,   // Ceiling division for width
+            (SDLHelper::SDL_WINDOW_HEIGHT + 19) / 20,  // Ceiling division for height
+            1
+        );
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+        mCurrentBatch++;
+
+        // Log progress
+        if (mCurrentBatch % 10 == 0 || mCurrentBatch == mTotalBatches) {
+            uint32_t totalSamples = mCurrentBatch * mSamplesPerBatch;
+            float progress = (float)mCurrentBatch / (float)mTotalBatches * 100.0f;
+            SDL_Log("Path tracing progress: %.1f%% (%u/%u batches, %u samples)",
+                    progress, mCurrentBatch, mTotalBatches, totalSamples);
+        }
+    }
+
+    // Display the current result
+    displayShader.bind();
+    displayShader.setUniform("uTexture2D", 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, displayTex);
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
 
 void Compute::sdlEvents(SDLHelper& sdlHandler, float& mouseWheelDy, bool& running)
 {

@@ -66,8 +66,8 @@ void Player::input(const SDLHelper& sdlHandler, const float mouseWheelDelta,
     const glm::vec2& coords)
 {
     glm::vec2 winCenter = glm::vec2(
-        static_cast<float>(SDLHelper::GLFW_WINDOW_X) * 0.5f,
-        static_cast<float>(SDLHelper::GLFW_WINDOW_Y) * 0.5f);
+        static_cast<float>(SDLHelper::SDL_WINDOW_WIDTH) * 0.5f,
+        static_cast<float>(SDLHelper::SDL_WINDOW_HEIGHT) * 0.5f);
 
     const auto& inputs = sdlHandler.getKeys();
 

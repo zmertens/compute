@@ -29,27 +29,41 @@
 
 class Compute
 {
+public:
+    Compute();
+    void run();
+
 private:
     Camera mCamera;
     Player mPlayer;
     static const glm::vec3 CLEAR_COLOR;
     static std::unordered_map<std::uint8_t, bool> mKepMap;
 
+    // Progressive path tracing state
+    uint32_t mCurrentBatch;
+    uint32_t mSamplesPerBatch;
+    uint32_t mTotalBatches;
+    bool mUsePathTracer;  // Toggle between old raytracer and new path tracer
+
     void initCompute(Shader& compute, GLuint shapeSSBO,
         std::vector<Sphere>& spheres, Plane& plane,
         std::vector<Light>& lights);
+
+    void initPathTracer(Shader& pathtracer, GLuint shapeSSBO, std::vector<Sphere>& spheres);
+
     void input(SDLHelper& sdlHandler);
-    void update(const float dt);
+    void update(float dt);
     void render(Shader& compute, Shader& raytracer,
         const std::vector<Sphere>& spheres, float ar,
         GLuint vao, GLuint tex, GLenum type = GL_TRIANGLE_STRIP);
 
+    void renderPathTracer(Shader& pathtracer, Shader& displayShader, float ar,
+        GLuint vao, GLuint accumTex, GLuint displayTex);
+
     void sdlEvents(SDLHelper& sdlHandler, float& mouseWheelDy, bool& running);
     void printFramesToConsole(SDLHelper& sdlHandler, unsigned int frameCounter, float timeSinceLastUpdate) const noexcept;
     void printOpenGlInfo();
-public:
-    Compute();
-    void run();
+
 };
 
 #endif // COMPUTE_HPP

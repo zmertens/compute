@@ -12,9 +12,8 @@ void main()
 {
 	vec3 color = texture(uTexture2D, vTexCoord).rgb;
 
-	// Apply gamma correction for proper display
-	color = pow(color, vec3(1.0 / 2.2));
-
+	// Gamma correction is already applied in the compute shader
+	// so we just pass through the color
 	FragColor = vec4(color, 1.0);
 }
 

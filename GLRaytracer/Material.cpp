@@ -10,6 +10,10 @@ Material::Material()
 , mShininess(0)
 , mReflectivity(0)
 , mRefractivity(0)
+, mAlbedo(glm::vec3(0.5f))
+, mType(MaterialType::LAMBERTIAN)
+, mFuzz(0.0f)
+, mRefractiveIndex(1.5f)
 {
 
 }
@@ -29,6 +33,10 @@ Material::Material(const glm::vec3& ambient, const glm::vec3& diffuse, const glm
 , mShininess(shininess)
 , mReflectivity(0)
 , mRefractivity(0)
+, mAlbedo(diffuse)
+, mType(MaterialType::LAMBERTIAN)
+, mFuzz(0.0f)
+, mRefractiveIndex(1.5f)
 {
 
 }
@@ -50,6 +58,10 @@ Material::Material(const glm::vec3& ambient, const glm::vec3& diffuse, const glm
 , mShininess(shininess)
 , mReflectivity(reflectValue)
 , mRefractivity(refractValue)
+, mAlbedo(diffuse)
+, mType(MaterialType::LAMBERTIAN)
+, mFuzz(0.0f)
+, mRefractiveIndex(refractValue > 0.0f ? refractValue : 1.5f)
 {
 
 }
@@ -161,3 +173,98 @@ void Material::setRefractivity(float refractivity)
 {
     mRefractivity = refractivity;
 }
+
+/**
+ * @brief Material::Material - PBR constructor
+ * @param albedo - Base color
+ * @param type - Material type (Lambertian, Metal, Dielectric)
+ * @param fuzz - Fuzziness for metals (0-1)
+ * @param refractiveIndex - Refractive index for dielectrics
+ */
+Material::Material(const glm::vec3& albedo, MaterialType type, float fuzz, float refractiveIndex)
+: mAmbient(albedo)
+, mDiffuse(albedo)
+, mSpecular(glm::vec3(1.0f))
+, mShininess(32.0f)
+, mReflectivity(type == MaterialType::METAL ? 1.0f : 0.0f)
+, mRefractivity(refractiveIndex)
+, mAlbedo(albedo)
+, mType(type)
+, mFuzz(fuzz)
+, mRefractiveIndex(refractiveIndex)
+{
+
+}
+
+/**
+ * @brief Material::getAlbedo
+ * @return Base color for PBR
+ */
+glm::vec3 Material::getAlbedo() const
+{
+    return mAlbedo;
+}
+
+/**
+ * @brief Material::setAlbedo
+ * @param albedo
+ */
+void Material::setAlbedo(const glm::vec3& albedo)
+{
+    mAlbedo = albedo;
+}
+
+/**
+ * @brief Material::getType
+ * @return Material type
+ */
+MaterialType Material::getType() const
+{
+    return mType;
+}
+
+/**
+ * @brief Material::setType
+ * @param type
+ */
+void Material::setType(MaterialType type)
+{
+    mType = type;
+}
+
+/**
+ * @brief Material::getFuzz
+ * @return Fuzziness for metals
+ */
+float Material::getFuzz() const
+{
+    return mFuzz;
+}
+
+/**
+ * @brief Material::setFuzz
+ * @param fuzz
+ */
+void Material::setFuzz(float fuzz)
+{
+    mFuzz = fuzz;
+}
+
+/**
+ * @brief Material::getRefractiveIndex
+ * @return Refractive index for dielectrics
+ */
+float Material::getRefractiveIndex() const
+{
+    return mRefractiveIndex;
+}
+
+/**
+ * @brief Material::setRefractiveIndex
+ * @param index
+ */
+void Material::setRefractiveIndex(float index)
+{
+    mRefractiveIndex = index;
+}
+
