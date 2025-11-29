@@ -34,7 +34,7 @@ if (NOT SDL3_FOUND)
     FetchContent_Declare(SDL
             GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
             GIT_TAG release-3.2.10)
-    set_property(DIRECTORY "${CMAKE_BINARY_DIR}/_deps/sdl-src" PROPERTY EXCLUDE_FROM_ALL TRUE)
+    set_property(DIRECTORY "${SDL_SOURCE_DIR}" PROPERTY EXCLUDE_FROM_ALL TRUE)
     FetchContent_MakeAvailable(SDL)
 endif ()
 
