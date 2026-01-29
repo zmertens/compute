@@ -38,6 +38,20 @@ if (NOT SDL3_FOUND)
     FetchContent_MakeAvailable(SDL)
 endif ()
 
+# Find SFML Network for multiplayer support
+find_package(SFML 2.5 COMPONENTS network QUIET)
+if(NOT SFML_FOUND)
+    message(STATUS "Getting SFML via FetchContent")
+    include(FetchContent)
+    FetchContent_Declare(
+        SFML
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        GIT_TAG 2.6.1
+    )
+    set_property(DIRECTORY "${CMAKE_BINARY_DIR}/_deps/sfml-src" PROPERTY EXCLUDE_FROM_ALL TRUE)
+    FetchContent_MakeAvailable(SFML)
+endif()
+
 
 set(GL_RAYTRACER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/GLRaytracer)
 
@@ -52,6 +66,10 @@ set(GL_RAYTRACER_SOURCE_FILES
     ${GL_RAYTRACER_DIR}/SDLHelper.cpp
     ${GL_RAYTRACER_DIR}/Shader.cpp
     ${GL_RAYTRACER_DIR}/Transform.cpp
+    ${GL_RAYTRACER_DIR}/ScoreManager.cpp
+    ${GL_RAYTRACER_DIR}/ObstacleManager.cpp
+    ${GL_RAYTRACER_DIR}/GameState.cpp
+    ${GL_RAYTRACER_DIR}/NetworkManager.cpp
 )
 
 add_executable(${COMPUTE_APP_NAME} ${GL_RAYTRACER_SOURCE_FILES})
@@ -62,7 +80,7 @@ target_compile_definitions(${COMPUTE_APP_NAME} PRIVATE GLM_FORCE_RADIANS)
 
 target_compile_features(${COMPUTE_APP_NAME} PRIVATE cxx_std_20)
 
-target_link_libraries(${COMPUTE_APP_NAME} OpenGL::GL SDL3::SDL3 glad)
+target_link_libraries(${COMPUTE_APP_NAME} OpenGL::GL SDL3::SDL3 glad sfml-network)
 
 target_include_directories(${COMPUTE_APP_NAME} PRIVATE ${GLM_DIR} ${GLAD_DIR}/include ${STB_IMAGE_DIR} ${GL_RAYTRACER_DIR})
 

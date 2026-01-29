@@ -42,6 +42,14 @@ public:
 
     bool getStrength() const;
     void setStrength(bool strength);
+    
+    // Network state
+    uint32_t getPlayerId() const;
+    void setPlayerId(uint32_t id);
+    glm::vec3 getVelocity() const;
+    void setVelocity(const glm::vec3& velocity);
+    bool isRemote() const;
+    void setRemote(bool remote);
 
 private:
     static const float scMouseSensitivity;
@@ -50,12 +58,15 @@ private:
     Camera& mFirstPersonCamera;
     glm::vec3 mStartPosition;
     glm::vec3 mMovementDir;
+    glm::vec3 mVelocity;
     bool mMouseLocked;
     bool mCollisions;
     bool mInvincible;
     bool mSpeed;
     bool mInfAmmo;
     bool mStrength;
+    uint32_t mPlayerId;
+    bool mIsRemote;
 private:
     glm::vec3 iterateThruSpace(const std::vector<glm::vec3>& emptySpaces,
         const glm::vec3& spaceScalar, const glm::vec3& origin,

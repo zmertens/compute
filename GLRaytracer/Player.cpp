@@ -18,12 +18,15 @@ Player::Player(Camera& camera)
 , mFirstPersonCamera(camera)
 , mStartPosition(camera.getPosition())
 , mMovementDir(glm::vec3(0))
+, mVelocity(glm::vec3(0))
 , mMouseLocked(false)
 , mCollisions(true)
 , mInvincible(false)
 , mSpeed(false)
 , mInfAmmo(false)
 , mStrength(false)
+, mPlayerId(0)
+, mIsRemote(false)
 {
 
 }
@@ -346,4 +349,34 @@ bool Player::isOnRechargePowerUp(const glm::vec3& origin) const
 bool Player::isOnInvinciblePowerUp(const glm::vec3& origin) const
 {
     return false;
+}
+
+uint32_t Player::getPlayerId() const
+{
+    return mPlayerId;
+}
+
+void Player::setPlayerId(uint32_t id)
+{
+    mPlayerId = id;
+}
+
+glm::vec3 Player::getVelocity() const
+{
+    return mVelocity;
+}
+
+void Player::setVelocity(const glm::vec3& velocity)
+{
+    mVelocity = velocity;
+}
+
+bool Player::isRemote() const
+{
+    return mIsRemote;
+}
+
+void Player::setRemote(bool remote)
+{
+    mIsRemote = remote;
 }

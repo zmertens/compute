@@ -14,10 +14,21 @@ std::unordered_map<std::uint8_t, bool> Compute::mKepMap;
 Compute::Compute()
     : mCamera(glm::vec3(0.0f, 50.0f, 200.0f), -90.0f, -10.0f, 65.0f, 0.1f, 500.0f)
       , mPlayer(mCamera)
+      , mScoreManager()
+      , mObstacleManager()
+      , mGameState()
+      , mNetworkManager()
 {
     // Camera positioned above and in front of sphere circle
     // Looking towards center with slight downward pitch
     // Far plane set to 500 to see all spheres at radius ~125
+    
+    // Initialize local player ID
+    mGameState.setLocalPlayerId(1);  // For single player; would be assigned by server in multiplayer
+    mPlayer.setPlayerId(mGameState.getLocalPlayerId());
+    
+    // Generate initial obstacles
+    mObstacleManager.generateObstacles(mPlayer.getPosition(), 200.0f);
 }
 
 void Compute::run()
@@ -259,13 +270,101 @@ void Compute::input(SDLHelper& sdlHandler)
     sdlHandler.getCursorPos(coordX, coordY);
     glm::vec2 coords = glm::vec2(coordX, coordY);
 
-    // handle realtime input
+    // handle realtime input for flying controls
     mPlayer.input(sdlHandler, mouseWheelDy, coords);
 }
 
 void Compute::update(const float dt)
 {
+    // Update player
     mPlayer.update(dt, 1.0);
+    
+    // Update game logic (forward motion, obstacles, scoring)
+    updateGameLogic(dt);
+    
+    // Check collisions
+    checkCollisions();
+    
+    // Update networking
+    updateNetworking(dt);
+}
+
+void Compute::updateGameLogic(float dt)
+{
+    if (mGameState.getStatus() != GameStatus::PLAYING)
+        return;
+    
+    // Automatic forward motion
+    float forwardSpeed = mGameState.getForwardSpeed();
+    glm::vec3 forwardMotion = mCamera.getTarget() * forwardSpeed * dt;
+    mPlayer.move(forwardMotion, 1.0f);
+    
+    // Track distance traveled
+    float distance = glm::length(forwardMotion);
+    mGameState.addDistanceTraveled(distance);
+    
+    // Update score based on distance
+    mScoreManager.updateDistanceScore(mGameState.getLocalPlayerId(), 
+                                      mGameState.getDistanceTraveled());
+    
+    // Update obstacles
+    mObstacleManager.update(mPlayer.getPosition(), dt);
+}
+
+void Compute::checkCollisions()
+{
+    if (mGameState.getStatus() != GameStatus::PLAYING)
+        return;
+    
+    // Check collision with obstacles
+    glm::vec3 playerPos = mPlayer.getPosition();
+    float playerRadius = 2.0f; // Player collision radius
+    
+    if (mObstacleManager.checkCollision(playerPos, playerRadius))
+    {
+        // Handle collision - could trigger game over or penalty
+        SDL_Log("Collision detected!");
+        // For now, just continue - could implement game over state
+    }
+}
+
+void Compute::updateNetworking(float dt)
+{
+    if (!mNetworkManager.isConnected())
+        return;
+    
+    // Update network manager
+    mNetworkManager.update(dt);
+    
+    // Send player state to network
+    PlayerStatePacket packet;
+    packet.playerId = mGameState.getLocalPlayerId();
+    glm::vec3 pos = mPlayer.getPosition();
+    packet.posX = pos.x;
+    packet.posY = pos.y;
+    packet.posZ = pos.z;
+    glm::vec3 vel = mPlayer.getVelocity();
+    packet.velX = vel.x;
+    packet.velY = vel.y;
+    packet.velZ = vel.z;
+    packet.score = mScoreManager.getScore(packet.playerId);
+    packet.timestamp = 0; // Could use actual timestamp
+    
+    mNetworkManager.sendPlayerState(packet);
+    
+    // Process incoming player state updates
+    while (mNetworkManager.hasPlayerStateUpdates())
+    {
+        PlayerStatePacket update = mNetworkManager.getNextPlayerStateUpdate();
+        
+        // Update remote player state in GameState
+        glm::vec3 remotePos(update.posX, update.posY, update.posZ);
+        glm::vec3 remoteVel(update.velX, update.velY, update.velZ);
+        mGameState.updateRemotePlayer(update.playerId, remotePos, remoteVel, update.score);
+        
+        // Update score manager with remote player score
+        mScoreManager.setScore(update.playerId, update.score);
+    }
 }
 
 /**
@@ -330,13 +429,16 @@ void Compute::printFramesToConsole(SDLHelper& sdlHandler, unsigned int frameCoun
         unsigned int fps = static_cast<unsigned int>(frameCounter / timeSinceLastUpdate);
         float msPerFrame = 1000.0f * timeSinceLastUpdate / static_cast<float>(frameCounter);
 
-        // Update window title with FPS info
+        // Update window title with FPS and score info
+        uint32_t score = mScoreManager.getScore(mGameState.getLocalPlayerId());
         char titleBuffer[256];
-        snprintf(titleBuffer, sizeof(titleBuffer), "Compute Raytracer - FPS: %u | %.2f ms/frame", fps, msPerFrame);
+        snprintf(titleBuffer, sizeof(titleBuffer), 
+                "Flying Game - FPS: %u | %.2f ms/frame | Score: %u | Distance: %.1f", 
+                fps, msPerFrame, score, mGameState.getDistanceTraveled());
         sdlHandler.setWindowTitle(titleBuffer);
 
         // Also log to console
-        SDL_Log("FPS: %u | time (ms) / frame: %.2f\n", fps, msPerFrame);
+        SDL_Log("FPS: %u | time (ms) / frame: %.2f | Score: %u\n", fps, msPerFrame, score);
     }
 }
 

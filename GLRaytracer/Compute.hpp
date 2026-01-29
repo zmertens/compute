@@ -26,12 +26,21 @@
 #include "Material.hpp"
 #include "Sphere.hpp"
 #include "Plane.hpp"
+#include "ScoreManager.hpp"
+#include "ObstacleManager.hpp"
+#include "GameState.hpp"
+#include "NetworkManager.hpp"
 
 class Compute
 {
 private:
     Camera mCamera;
     Player mPlayer;
+    ScoreManager mScoreManager;
+    ObstacleManager mObstacleManager;
+    GameState mGameState;
+    NetworkManager mNetworkManager;
+    
     static const glm::vec3 CLEAR_COLOR;
     static std::unordered_map<std::uint8_t, bool> mKepMap;
 
@@ -47,6 +56,10 @@ private:
     void sdlEvents(SDLHelper& sdlHandler, float& mouseWheelDy, bool& running);
     void printFramesToConsole(SDLHelper& sdlHandler, unsigned int frameCounter, float timeSinceLastUpdate) const noexcept;
     void printOpenGlInfo();
+    
+    void updateGameLogic(float dt);
+    void checkCollisions();
+    void updateNetworking(float dt);
 public:
     Compute();
     void run();
